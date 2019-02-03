@@ -6,19 +6,19 @@ package example
 
 import "math/rand"
 
-type IntImmutableList struct {
-	list []int
+type FloatImmutableList struct {
+	list []float64
 }
 
 // Immutable functions
 
-func (l *IntImmutableList) NewWith(element int) (newList *IntImmutableList) {
-	newList = &IntImmutableList{list: append(l.list, element)}
+func (l *FloatImmutableList) NewWith(element float64) (newList *FloatImmutableList) {
+	newList = &FloatImmutableList{list: append(l.list, element)}
 	return
 }
 
-func (l *IntImmutableList) NewWithout(element int) (newList *IntImmutableList) {
-	newList = &IntImmutableList{}
+func (l *FloatImmutableList) NewWithout(element float64) (newList *FloatImmutableList) {
+	newList = &FloatImmutableList{}
 	for _, e := range l.list {
 		if e != element {
 			newList.list = append(newList.list, e)
@@ -27,8 +27,8 @@ func (l *IntImmutableList) NewWithout(element int) (newList *IntImmutableList) {
 	return newList
 }
 
-func (l *IntImmutableList) NewWithAll(elements []int) (newList *IntImmutableList) {
-	newList = &IntImmutableList{}
+func (l *FloatImmutableList) NewWithAll(elements []float64) (newList *FloatImmutableList) {
+	newList = &FloatImmutableList{}
 	for _, e1 := range l.list {
 		for _, e2 := range elements {
 			if e1 != e2 {
@@ -40,8 +40,8 @@ func (l *IntImmutableList) NewWithAll(elements []int) (newList *IntImmutableList
 	return newList
 }
 
-func (l *IntImmutableList) NewWithoutAll(elements []int) (newList *IntImmutableList) {
-	newList = &IntImmutableList{}
+func (l *FloatImmutableList) NewWithoutAll(elements []float64) (newList *FloatImmutableList) {
+	newList = &FloatImmutableList{}
 	for _, e1 := range l.list {
 		found := false
 		for _, e2 := range elements {
@@ -57,26 +57,26 @@ func (l *IntImmutableList) NewWithoutAll(elements []int) (newList *IntImmutableL
 	return newList
 }
 
-func (l *IntImmutableList) Size() int {
+func (l *FloatImmutableList) Size() int {
 	return len(l.list)
 }
 
-func (l *IntImmutableList) IsEmpty() bool {
+func (l *FloatImmutableList) IsEmpty() bool {
 	return len(l.list) == 0
 }
 
-func (l *IntImmutableList) NotEmpty() bool {
+func (l *FloatImmutableList) NotEmpty() bool {
 	return len(l.list) > 0
 }
 
-func (l *IntImmutableList) GetAny() (result int) {
+func (l *FloatImmutableList) GetAny() (result float64) {
 	if len(l.list) > 0 {
 		result = l.list[rand.Intn(len(l.list)-1)]
 	}
 	return
 }
 
-func (l *IntImmutableList) Contains(element int) bool {
+func (l *FloatImmutableList) Contains(element float64) bool {
 	for _, e1 := range l.list {
 		if e1 == element {
 			return true
@@ -85,7 +85,7 @@ func (l *IntImmutableList) Contains(element int) bool {
 	return false
 }
 
-func (l *IntImmutableList) ContainsAll(elements []int) bool {
+func (l *FloatImmutableList) ContainsAll(elements []float64) bool {
 	n := 0
 	for _, e1 := range l.list {
 		for _, e2 := range elements {
@@ -101,15 +101,15 @@ func (l *IntImmutableList) ContainsAll(elements []int) bool {
 	return false
 }
 
-func (l *IntImmutableList) Each(procedure func(element int)) *IntImmutableList {
+func (l *FloatImmutableList) Each(procedure func(element float64)) *FloatImmutableList {
 	for _, e := range l.list {
 		procedure(e)
 	}
 	return l
 }
 
-func (l *IntImmutableList) Select(predicate func(element int) bool) (newList *IntImmutableList) {
-	newList = &IntImmutableList{}
+func (l *FloatImmutableList) Select(predicate func(element float64) bool) (newList *FloatImmutableList) {
+	newList = &FloatImmutableList{}
 	for _, e := range l.list {
 		if predicate(e) {
 			newList.list = append(newList.list, e)
@@ -118,8 +118,8 @@ func (l *IntImmutableList) Select(predicate func(element int) bool) (newList *In
 	return
 }
 
-func (l *IntImmutableList) Reject(predicate func(element int) bool) (newList *IntImmutableList) {
-	newList = &IntImmutableList{}
+func (l *FloatImmutableList) Reject(predicate func(element float64) bool) (newList *FloatImmutableList) {
+	newList = &FloatImmutableList{}
 	for _, e := range l.list {
 		if predicate(e) == false {
 			newList.list = append(newList.list, e)
@@ -128,8 +128,8 @@ func (l *IntImmutableList) Reject(predicate func(element int) bool) (newList *In
 	return
 }
 
-func (l *IntImmutableList) Partition(predicate func(element int) bool) (accepted, rejected *IntImmutableList) {
-	accepted, rejected = &IntImmutableList{}, &IntImmutableList{}
+func (l *FloatImmutableList) Partition(predicate func(element float64) bool) (accepted, rejected *FloatImmutableList) {
+	accepted, rejected = &FloatImmutableList{}, &FloatImmutableList{}
 	for _, e := range l.list {
 		if predicate(e) {
 			accepted.list = append(accepted.list, e)
@@ -140,7 +140,7 @@ func (l *IntImmutableList) Partition(predicate func(element int) bool) (accepted
 	return
 }
 
-func (l *IntImmutableList) Detect(predicate func(element int) bool) bool {
+func (l *FloatImmutableList) Detect(predicate func(element float64) bool) bool {
 	for _, e := range l.list {
 		if predicate(e) {
 			return true
@@ -149,7 +149,7 @@ func (l *IntImmutableList) Detect(predicate func(element int) bool) bool {
 	return false
 }
 
-func (l *IntImmutableList) Count(predicate func(element int) bool) (count int) {
+func (l *FloatImmutableList) Count(predicate func(element float64) bool) (count int) {
 	for _, e := range l.list {
 		if predicate(e) {
 			count++
@@ -158,7 +158,7 @@ func (l *IntImmutableList) Count(predicate func(element int) bool) (count int) {
 	return
 }
 
-func (l *IntImmutableList) AnySatisfy(predicate func(element int) bool) bool {
+func (l *FloatImmutableList) AnySatisfy(predicate func(element float64) bool) bool {
 	for _, e := range l.list {
 		if predicate(e) {
 			return true
@@ -167,7 +167,7 @@ func (l *IntImmutableList) AnySatisfy(predicate func(element int) bool) bool {
 	return false
 }
 
-func (l *IntImmutableList) AllSatisfy(predicate func(element int) bool) bool {
+func (l *FloatImmutableList) AllSatisfy(predicate func(element float64) bool) bool {
 	for _, e := range l.list {
 		if predicate(e) == false {
 			return false
@@ -176,7 +176,7 @@ func (l *IntImmutableList) AllSatisfy(predicate func(element int) bool) bool {
 	return true
 }
 
-func (l *IntImmutableList) NoneSatisfy(predicate func(element int) bool) bool {
+func (l *FloatImmutableList) NoneSatisfy(predicate func(element float64) bool) bool {
 	for _, e := range l.list {
 		if predicate(e) {
 			return false

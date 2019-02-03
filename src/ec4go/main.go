@@ -10,35 +10,36 @@ import (
 )
 
 func main() {
-	flag.String("name", "", "name of the list")
-	flag.String("type", "", "type of the list")
-	flag.String("package", "", "package name of the list")
+	listName := flag.String("name", "", "name of the list")
+	listType := flag.String("type", "", "type of the list")
+	packageName := flag.String("package", "", "package name of the list")
+	addMutableFunctions := flag.Bool("mutable", false, "add mutable functions to the list")
 	flag.Parse()
-	
+
 	if len(os.Args) <= 1 {
 		flag.Usage()
 		return
 	}
 
 	fileName := fmt.Sprintf("%s.go", flag.Lookup("name").Value.String())
-		file, err := os.Create(fileName)
-		if err != nil {	
+	file, err := os.Create(fileName)
+	if err != nil {
 		log.Fatalf("Unable to create file: %s - %s", fileName, err)
 	}
 	w := bufio.NewWriter(file)
-	t := template.Must(template.New("immutableListTemplate").Parse(immutableListTemplate))
-	
+	immutableListTemplate := template.Must(template.New("immutableListTemplate").Parse(immutableListTemplate))
+
 	type value struct {
 		PackageName string
-		ListName string
-		ListType string
+		ListName    string
+		ListType    string
 	}
-	v:= value{
-		PackageName: flag.Lookup("package").Value.String(),
-		ListName: flag.Lookup("name").Value.String(),
-		ListType: flag.Lookup("type").Value.String(),
+	v := value{
+		PackageName: *packageName,
+		ListName:    *listName,
+		ListType:    *listType,
 	}
-	primitiveTypes:= []string{"int", "int64", "float64", "bool"}
+	primitiveTypes := []string{"int", "int8,", "int16", "int32", "int64", "float32", "float64", "bool", "string"}
 
 	primitive := false
 	for _, pt := range primitiveTypes {
@@ -51,13 +52,18 @@ func main() {
 		v.ListType = "*" + v.ListType
 	}
 
-	if err = t.Execute(w, v); err != nil {
+	if err = immutableListTemplate.Execute(w, v); err != nil {
 		log.Fatalf("Failed to create[%s]: %s", fileName, err)
+	}
+	if *addMutableFunctions {
+		mutableListTemplate := template.Must(template.New("mutableListTemplate").Parse(mutableListTemplate))
+		if err = mutableListTemplate.Execute(w, v); err != nil {
+			log.Fatalf("Failed to add mutable functions[%s]: %s", fileName, err)
+		}
 	}
 	w.Flush()
 	file.Close()
 }
-
 
 var immutableListTemplate = `/*
 * CODE GENERATED AUTOMATICALLY WITH github.com/maded2/ec4go
@@ -248,13 +254,7 @@ func (l *{{.ListName}}) NoneSatisfy(predicate func(element {{.ListType}}) bool) 
 
 `
 
-
 var mutableListTemplate = `
-package {{.packageName}}
-
-type {{.ListName}} struct {
-	IntImmutableList
-}
 
 // Mutable functions
 func (l *{{.ListName}}) NewEmpty() (newList *{{.ListName}}) {

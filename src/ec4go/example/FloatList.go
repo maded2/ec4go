@@ -6,19 +6,19 @@ package example
 
 import "math/rand"
 
-type TestCaseTypeList struct {
-	list []*TestCaseType
+type FloatList struct {
+	list []float64
 }
 
 // Immutable functions
 
-func (l *TestCaseTypeList) NewWith(element *TestCaseType) (newList *TestCaseTypeList) {
-	newList = &TestCaseTypeList{list: append(l.list, element)}
+func (l *FloatList) NewWith(element float64) (newList *FloatList) {
+	newList = &FloatList{list: append(l.list, element)}
 	return
 }
 
-func (l *TestCaseTypeList) NewWithout(element *TestCaseType) (newList *TestCaseTypeList) {
-	newList = &TestCaseTypeList{}
+func (l *FloatList) NewWithout(element float64) (newList *FloatList) {
+	newList = &FloatList{}
 	for _, e := range l.list {
 		if e != element {
 			newList.list = append(newList.list, e)
@@ -27,8 +27,8 @@ func (l *TestCaseTypeList) NewWithout(element *TestCaseType) (newList *TestCaseT
 	return newList
 }
 
-func (l *TestCaseTypeList) NewWithAll(elements []*TestCaseType) (newList *TestCaseTypeList) {
-	newList = &TestCaseTypeList{}
+func (l *FloatList) NewWithAll(elements []float64) (newList *FloatList) {
+	newList = &FloatList{}
 	for _, e1 := range l.list {
 		for _, e2 := range elements {
 			if e1 != e2 {
@@ -40,8 +40,8 @@ func (l *TestCaseTypeList) NewWithAll(elements []*TestCaseType) (newList *TestCa
 	return newList
 }
 
-func (l *TestCaseTypeList) NewWithoutAll(elements []*TestCaseType) (newList *TestCaseTypeList) {
-	newList = &TestCaseTypeList{}
+func (l *FloatList) NewWithoutAll(elements []float64) (newList *FloatList) {
+	newList = &FloatList{}
 	for _, e1 := range l.list {
 		found := false
 		for _, e2 := range elements {
@@ -57,26 +57,26 @@ func (l *TestCaseTypeList) NewWithoutAll(elements []*TestCaseType) (newList *Tes
 	return newList
 }
 
-func (l *TestCaseTypeList) Size() int {
+func (l *FloatList) Size() int {
 	return len(l.list)
 }
 
-func (l *TestCaseTypeList) IsEmpty() bool {
+func (l *FloatList) IsEmpty() bool {
 	return len(l.list) == 0
 }
 
-func (l *TestCaseTypeList) NotEmpty() bool {
+func (l *FloatList) NotEmpty() bool {
 	return len(l.list) > 0
 }
 
-func (l *TestCaseTypeList) GetAny() (result *TestCaseType) {
+func (l *FloatList) GetAny() (result float64) {
 	if len(l.list) > 0 {
 		result = l.list[rand.Intn(len(l.list)-1)]
 	}
 	return
 }
 
-func (l *TestCaseTypeList) Contains(element *TestCaseType) bool {
+func (l *FloatList) Contains(element float64) bool {
 	for _, e1 := range l.list {
 		if e1 == element {
 			return true
@@ -85,7 +85,7 @@ func (l *TestCaseTypeList) Contains(element *TestCaseType) bool {
 	return false
 }
 
-func (l *TestCaseTypeList) ContainsAll(elements []*TestCaseType) bool {
+func (l *FloatList) ContainsAll(elements []float64) bool {
 	n := 0
 	for _, e1 := range l.list {
 		for _, e2 := range elements {
@@ -101,15 +101,15 @@ func (l *TestCaseTypeList) ContainsAll(elements []*TestCaseType) bool {
 	return false
 }
 
-func (l *TestCaseTypeList) Each(procedure func(element *TestCaseType)) *TestCaseTypeList {
+func (l *FloatList) Each(procedure func(element float64)) *FloatList {
 	for _, e := range l.list {
 		procedure(e)
 	}
 	return l
 }
 
-func (l *TestCaseTypeList) Select(predicate func(element *TestCaseType) bool) (newList *TestCaseTypeList) {
-	newList = &TestCaseTypeList{}
+func (l *FloatList) Select(predicate func(element float64) bool) (newList *FloatList) {
+	newList = &FloatList{}
 	for _, e := range l.list {
 		if predicate(e) {
 			newList.list = append(newList.list, e)
@@ -118,8 +118,8 @@ func (l *TestCaseTypeList) Select(predicate func(element *TestCaseType) bool) (n
 	return
 }
 
-func (l *TestCaseTypeList) Reject(predicate func(element *TestCaseType) bool) (newList *TestCaseTypeList) {
-	newList = &TestCaseTypeList{}
+func (l *FloatList) Reject(predicate func(element float64) bool) (newList *FloatList) {
+	newList = &FloatList{}
 	for _, e := range l.list {
 		if predicate(e) == false {
 			newList.list = append(newList.list, e)
@@ -128,8 +128,8 @@ func (l *TestCaseTypeList) Reject(predicate func(element *TestCaseType) bool) (n
 	return
 }
 
-func (l *TestCaseTypeList) Partition(predicate func(element *TestCaseType) bool) (accepted, rejected *TestCaseTypeList) {
-	accepted, rejected = &TestCaseTypeList{}, &TestCaseTypeList{}
+func (l *FloatList) Partition(predicate func(element float64) bool) (accepted, rejected *FloatList) {
+	accepted, rejected = &FloatList{}, &FloatList{}
 	for _, e := range l.list {
 		if predicate(e) {
 			accepted.list = append(accepted.list, e)
@@ -140,7 +140,7 @@ func (l *TestCaseTypeList) Partition(predicate func(element *TestCaseType) bool)
 	return
 }
 
-func (l *TestCaseTypeList) Detect(predicate func(element *TestCaseType) bool) bool {
+func (l *FloatList) Detect(predicate func(element float64) bool) bool {
 	for _, e := range l.list {
 		if predicate(e) {
 			return true
@@ -149,7 +149,7 @@ func (l *TestCaseTypeList) Detect(predicate func(element *TestCaseType) bool) bo
 	return false
 }
 
-func (l *TestCaseTypeList) Count(predicate func(element *TestCaseType) bool) (count int) {
+func (l *FloatList) Count(predicate func(element float64) bool) (count int) {
 	for _, e := range l.list {
 		if predicate(e) {
 			count++
@@ -158,7 +158,7 @@ func (l *TestCaseTypeList) Count(predicate func(element *TestCaseType) bool) (co
 	return
 }
 
-func (l *TestCaseTypeList) AnySatisfy(predicate func(element *TestCaseType) bool) bool {
+func (l *FloatList) AnySatisfy(predicate func(element float64) bool) bool {
 	for _, e := range l.list {
 		if predicate(e) {
 			return true
@@ -167,7 +167,7 @@ func (l *TestCaseTypeList) AnySatisfy(predicate func(element *TestCaseType) bool
 	return false
 }
 
-func (l *TestCaseTypeList) AllSatisfy(predicate func(element *TestCaseType) bool) bool {
+func (l *FloatList) AllSatisfy(predicate func(element float64) bool) bool {
 	for _, e := range l.list {
 		if predicate(e) == false {
 			return false
@@ -176,7 +176,7 @@ func (l *TestCaseTypeList) AllSatisfy(predicate func(element *TestCaseType) bool
 	return true
 }
 
-func (l *TestCaseTypeList) NoneSatisfy(predicate func(element *TestCaseType) bool) bool {
+func (l *FloatList) NoneSatisfy(predicate func(element float64) bool) bool {
 	for _, e := range l.list {
 		if predicate(e) {
 			return false
@@ -186,17 +186,17 @@ func (l *TestCaseTypeList) NoneSatisfy(predicate func(element *TestCaseType) boo
 }
 
 // Mutable functions
-func (l *TestCaseTypeList) NewEmpty() (newList *TestCaseTypeList) {
-	newList = &TestCaseTypeList{}
+func (l *FloatList) NewEmpty() (newList *FloatList) {
+	newList = &FloatList{}
 	return l
 }
 
-func (l *TestCaseTypeList) With(element *TestCaseType) *TestCaseTypeList {
+func (l *FloatList) With(element float64) *FloatList {
 	l.list = append(l.list, element)
 	return l
 }
 
-func (l *TestCaseTypeList) Without(element *TestCaseType) *TestCaseTypeList {
+func (l *FloatList) Without(element float64) *FloatList {
 	for n, e := range l.list {
 		if e == element {
 			l.list = append(l.list[:n], l.list[n+1:]...)
@@ -205,12 +205,12 @@ func (l *TestCaseTypeList) Without(element *TestCaseType) *TestCaseTypeList {
 	return l
 }
 
-func (l *TestCaseTypeList) WithAll(elements []*TestCaseType) *TestCaseTypeList {
+func (l *FloatList) WithAll(elements []float64) *FloatList {
 	l.list = append(l.list, elements...)
 	return l
 }
 
-func (l *TestCaseTypeList) WithoutAll(elements []*TestCaseType) *TestCaseTypeList {
+func (l *FloatList) WithoutAll(elements []float64) *FloatList {
 	for __, element := range elements {
 		for n, e := range l.list {
 			if e == element {
@@ -221,7 +221,7 @@ func (l *TestCaseTypeList) WithoutAll(elements []*TestCaseType) *TestCaseTypeLis
 	return l
 }
 
-func (l *TestCaseTypeList) RemoveIf(predicate func(element *TestCaseType) bool) (l *TestCaseTypeList) {
+func (l *FloatList) RemoveIf(predicate func(element float64) bool) (l *FloatList) {
 	for n, e := range l.list {
 		if predicate(e) {
 			l.list = append(l.list[:n], l.list[n+1:]...)
@@ -230,15 +230,15 @@ func (l *TestCaseTypeList) RemoveIf(predicate func(element *TestCaseType) bool) 
 	return l
 }
 
-func (l *TestCaseTypeList) AddAll(elements []*TestCaseType) *TestCaseTypeList {
+func (l *FloatList) AddAll(elements []float64) *FloatList {
 	return l.WithAll(elements)
 }
 
-func (l *TestCaseTypeList) RemoveAll(elements []*TestCaseType) *TestCaseTypeList {
+func (l *FloatList) RemoveAll(elements []float64) *FloatList {
 	return l.WithoutAll(elements)
 }
 
-func (l *TestCaseTypeList) RetainAll(elements []*TestCaseType) *TestCaseTypeList {
+func (l *FloatList) RetainAll(elements []float64) *FloatList {
 	for n, e := range l.list {
 		retain := true
 		for __, element := range elements {

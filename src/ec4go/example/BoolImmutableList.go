@@ -1,24 +1,24 @@
 /*
 * CODE GENERATED AUTOMATICALLY WITH github.com/maded2/ec4go
 * THIS FILE SHOULD NOT BE EDITED BY HAND
-*/
+ */
 package example
 
 import "math/rand"
 
-type IntTypeList struct {
-	list []int
+type BoolImmutableList struct {
+	list []bool
 }
 
 // Immutable functions
 
-func (l *IntTypeList) NewWith(element int) (newList *IntTypeList) {
-	newList = &IntTypeList{list: append(l.list, element)}
+func (l *BoolImmutableList) NewWith(element bool) (newList *BoolImmutableList) {
+	newList = &BoolImmutableList{list: append(l.list, element)}
 	return
 }
 
-func (l *IntTypeList) NewWithout(element int) (newList *IntTypeList) {
-	newList = &IntTypeList{}
+func (l *BoolImmutableList) NewWithout(element bool) (newList *BoolImmutableList) {
+	newList = &BoolImmutableList{}
 	for _, e := range l.list {
 		if e != element {
 			newList.list = append(newList.list, e)
@@ -27,8 +27,8 @@ func (l *IntTypeList) NewWithout(element int) (newList *IntTypeList) {
 	return newList
 }
 
-func (l *IntTypeList) NewWithAll(elements []int) (newList *IntTypeList) {
-	newList = &IntTypeList{}
+func (l *BoolImmutableList) NewWithAll(elements []bool) (newList *BoolImmutableList) {
+	newList = &BoolImmutableList{}
 	for _, e1 := range l.list {
 		for _, e2 := range elements {
 			if e1 != e2 {
@@ -40,8 +40,8 @@ func (l *IntTypeList) NewWithAll(elements []int) (newList *IntTypeList) {
 	return newList
 }
 
-func (l *IntTypeList) NewWithoutAll(elements []int) (newList *IntTypeList) {
-	newList = &IntTypeList{}
+func (l *BoolImmutableList) NewWithoutAll(elements []bool) (newList *BoolImmutableList) {
+	newList = &BoolImmutableList{}
 	for _, e1 := range l.list {
 		found := false
 		for _, e2 := range elements {
@@ -57,26 +57,26 @@ func (l *IntTypeList) NewWithoutAll(elements []int) (newList *IntTypeList) {
 	return newList
 }
 
-func (l *IntTypeList) Size() int {
+func (l *BoolImmutableList) Size() int {
 	return len(l.list)
 }
 
-func (l *IntTypeList) IsEmpty() bool {
+func (l *BoolImmutableList) IsEmpty() bool {
 	return len(l.list) == 0
 }
 
-func (l *IntTypeList) NotEmpty() bool {
+func (l *BoolImmutableList) NotEmpty() bool {
 	return len(l.list) > 0
 }
 
-func (l *IntTypeList) GetAny() (result int) {
+func (l *BoolImmutableList) GetAny() (result bool) {
 	if len(l.list) > 0 {
 		result = l.list[rand.Intn(len(l.list)-1)]
 	}
 	return
 }
 
-func (l *IntTypeList) Contains(element int) bool {
+func (l *BoolImmutableList) Contains(element bool) bool {
 	for _, e1 := range l.list {
 		if e1 == element {
 			return true
@@ -85,7 +85,7 @@ func (l *IntTypeList) Contains(element int) bool {
 	return false
 }
 
-func (l *IntTypeList) ContainsAll(elements []int) bool {
+func (l *BoolImmutableList) ContainsAll(elements []bool) bool {
 	n := 0
 	for _, e1 := range l.list {
 		for _, e2 := range elements {
@@ -101,15 +101,15 @@ func (l *IntTypeList) ContainsAll(elements []int) bool {
 	return false
 }
 
-func (l *IntTypeList) Each(procedure func(element int)) *IntTypeList {
+func (l *BoolImmutableList) Each(procedure func(element bool)) *BoolImmutableList {
 	for _, e := range l.list {
 		procedure(e)
 	}
 	return l
 }
 
-func (l *IntTypeList) Select(predicate func(element int) bool) (newList *IntTypeList) {
-	newList = &IntTypeList{}
+func (l *BoolImmutableList) Select(predicate func(element bool) bool) (newList *BoolImmutableList) {
+	newList = &BoolImmutableList{}
 	for _, e := range l.list {
 		if predicate(e) {
 			newList.list = append(newList.list, e)
@@ -118,8 +118,8 @@ func (l *IntTypeList) Select(predicate func(element int) bool) (newList *IntType
 	return
 }
 
-func (l *IntTypeList) Reject(predicate func(element int) bool) (newList *IntTypeList) {
-	newList = &IntTypeList{}
+func (l *BoolImmutableList) Reject(predicate func(element bool) bool) (newList *BoolImmutableList) {
+	newList = &BoolImmutableList{}
 	for _, e := range l.list {
 		if predicate(e) == false {
 			newList.list = append(newList.list, e)
@@ -128,8 +128,8 @@ func (l *IntTypeList) Reject(predicate func(element int) bool) (newList *IntType
 	return
 }
 
-func (l *IntTypeList) Partition(predicate func(element int) bool) (accepted, rejected *IntTypeList) {
-	accepted, rejected = &IntTypeList{}, &IntTypeList{}
+func (l *BoolImmutableList) Partition(predicate func(element bool) bool) (accepted, rejected *BoolImmutableList) {
+	accepted, rejected = &BoolImmutableList{}, &BoolImmutableList{}
 	for _, e := range l.list {
 		if predicate(e) {
 			accepted.list = append(accepted.list, e)
@@ -140,7 +140,7 @@ func (l *IntTypeList) Partition(predicate func(element int) bool) (accepted, rej
 	return
 }
 
-func (l *IntTypeList) Detect(predicate func(element int) bool) bool {
+func (l *BoolImmutableList) Detect(predicate func(element bool) bool) bool {
 	for _, e := range l.list {
 		if predicate(e) {
 			return true
@@ -149,7 +149,7 @@ func (l *IntTypeList) Detect(predicate func(element int) bool) bool {
 	return false
 }
 
-func (l *IntTypeList) Count(predicate func(element int) bool) (count int) {
+func (l *BoolImmutableList) Count(predicate func(element bool) bool) (count int) {
 	for _, e := range l.list {
 		if predicate(e) {
 			count++
@@ -158,7 +158,7 @@ func (l *IntTypeList) Count(predicate func(element int) bool) (count int) {
 	return
 }
 
-func (l *IntTypeList) AnySatisfy(predicate func(element int) bool) bool {
+func (l *BoolImmutableList) AnySatisfy(predicate func(element bool) bool) bool {
 	for _, e := range l.list {
 		if predicate(e) {
 			return true
@@ -167,7 +167,7 @@ func (l *IntTypeList) AnySatisfy(predicate func(element int) bool) bool {
 	return false
 }
 
-func (l *IntTypeList) AllSatisfy(predicate func(element int) bool) bool {
+func (l *BoolImmutableList) AllSatisfy(predicate func(element bool) bool) bool {
 	for _, e := range l.list {
 		if predicate(e) == false {
 			return false
@@ -176,7 +176,7 @@ func (l *IntTypeList) AllSatisfy(predicate func(element int) bool) bool {
 	return true
 }
 
-func (l *IntTypeList) NoneSatisfy(predicate func(element int) bool) bool {
+func (l *BoolImmutableList) NoneSatisfy(predicate func(element bool) bool) bool {
 	for _, e := range l.list {
 		if predicate(e) {
 			return false
@@ -184,4 +184,3 @@ func (l *IntTypeList) NoneSatisfy(predicate func(element int) bool) bool {
 	}
 	return true
 }
-
