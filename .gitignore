@@ -1,0 +1,13 @@
+/bin/
+/pkg/
+/log/
+.idea
+GeoLite2-City.mmdb
+bit-delta-1.iml
+/node_modules/
+/vendor/bin
+/vendor/pkg/**/*.a
+
+*.o
+*.a
+*.so
