@@ -16,106 +16,170 @@ type BoolList struct {
 // Immutable functions
 
 func (l *BoolList) NewWith(element bool) (newList *BoolList) {
-	newList = &BoolList{list: append(l.list, element)}
-	return
-}
-
-func (l *BoolList) NewWithout(element bool) (newList *BoolList) {
 	newList = &BoolList{}
-	for _, e := range l.list {
-		if e != element {
-			newList.list = append(newList.list, e)
-		}
+	if l != nil {
+		newList.list = append(l.list, element)
+	} else {
+		newList.list = append([]bool{}, element)
 	}
-	return newList
+	return
 }
 
 func (l *BoolList) NewWithAll(elements []bool) (newList *BoolList) {
 	newList = &BoolList{}
-	for _, e1 := range l.list {
-		for _, e2 := range elements {
-			if e1 != e2 {
-				newList.list = append(newList.list, e1)
-				break
+	if l == nil {
+		newList.list = append(l.list, elements...)
+	} else {
+		for _, e1 := range l.list {
+			for _, e2 := range elements {
+				if e1 != e2 {
+					newList.list = append(newList.list, e1)
+					break
+				}
 			}
 		}
 	}
+
 	return newList
+}
+
+func (l *BoolList) NewWithout(element bool) (newList *BoolList) {
+	newList = &BoolList{}
+	if l != nil {
+		for _, e := range l.list {
+			if e != element {
+				newList.list = append(newList.list, e)
+			}
+		}
+	}
+	return
 }
 
 func (l *BoolList) NewWithoutAll(elements []bool) (newList *BoolList) {
 	newList = &BoolList{}
-	for _, e1 := range l.list {
-		found := false
-		for _, e2 := range elements {
-			if e1 == e2 {
-				found = true
-				break
+	if l != nil {
+		for _, e1 := range l.list {
+			found := false
+			for _, e2 := range elements {
+				if e1 == e2 {
+					found = true
+					break
+				}
 			}
-		}
-		if !found {
-			newList.list = append(newList.list, e1)
+			if !found {
+				newList.list = append(newList.list, e1)
+			}
 		}
 	}
 	return newList
 }
 
-func (l *BoolList) Size() int {
-	return len(l.list)
+func (l *BoolList) Remove(element bool) (newList *BoolList) {
+	newList = &BoolList{}
+	if l != nil {
+		for _, e := range l.list {
+			if e != element {
+				newList.list = append(newList.list, e)
+			}
+		}
+	}
+	return newList
+}
+
+func (l *BoolList) RemoveAll(elements []bool) (newList *BoolList) {
+	newList = &BoolList{}
+	if l != nil {
+		for _, e1 := range l.list {
+			found := false
+			for _, e2 := range elements {
+				if e1 == e2 {
+					found = true
+					break
+				}
+			}
+			if !found {
+				newList.list = append(newList.list, e1)
+			}
+		}
+	}
+	return newList
+}
+
+func (l *BoolList) Size() (size int) {
+	if l != nil {
+		size = len(l.list)
+	}
+	return
 }
 
 func (l *BoolList) IsEmpty() bool {
-	return len(l.list) == 0
+	if l != nil {
+		return len(l.list) == 0
+	} else {
+		return true
+	}
 }
 
 func (l *BoolList) NotEmpty() bool {
-	return len(l.list) > 0
+	if l != nil {
+		return len(l.list) > 0
+	} else {
+		return false
+	}
 }
 
 func (l *BoolList) GetAny() (result bool) {
-	if len(l.list) > 0 {
+	if l != nil && len(l.list) > 0 {
 		result = l.list[rand.Intn(len(l.list)-1)]
 	}
 	return
 }
 
 func (l *BoolList) Contains(element bool) bool {
-	for _, e1 := range l.list {
-		if e1 == element {
-			return true
+	if l != nil {
+		for _, e1 := range l.list {
+			if e1 == element {
+				return true
+			}
 		}
 	}
 	return false
 }
 
 func (l *BoolList) ContainsAll(elements []bool) bool {
-	n := 0
-	for _, e1 := range l.list {
-		for _, e2 := range elements {
-			if e1 == e2 {
-				n++
-				break
+	if l != nil {
+		n := 0
+		for _, e1 := range l.list {
+			for _, e2 := range elements {
+				if e1 == e2 {
+					n++
+					break
+				}
 			}
-		}
-		if n == len(elements) {
-			return true
+			if n == len(elements) {
+				return true
+			}
 		}
 	}
 	return false
 }
 
 func (l *BoolList) Each(procedure func(element bool)) *BoolList {
-	for _, e := range l.list {
-		procedure(e)
+	if l != nil {
+		for _, e := range l.list {
+			procedure(e)
+		}
 	}
 	return l
 }
 
 func (l *BoolList) Select(predicate func(element bool) bool) (newList *BoolList) {
 	newList = &BoolList{}
-	for _, e := range l.list {
-		if predicate(e) {
-			newList.list = append(newList.list, e)
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) {
+				newList.list = append(newList.list, e)
+			}
 		}
 	}
 	return
@@ -123,9 +187,11 @@ func (l *BoolList) Select(predicate func(element bool) bool) (newList *BoolList)
 
 func (l *BoolList) Reject(predicate func(element bool) bool) (newList *BoolList) {
 	newList = &BoolList{}
-	for _, e := range l.list {
-		if predicate(e) == false {
-			newList.list = append(newList.list, e)
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) == false {
+				newList.list = append(newList.list, e)
+			}
 		}
 	}
 	return
@@ -133,67 +199,82 @@ func (l *BoolList) Reject(predicate func(element bool) bool) (newList *BoolList)
 
 func (l *BoolList) Partition(predicate func(element bool) bool) (accepted, rejected *BoolList) {
 	accepted, rejected = &BoolList{}, &BoolList{}
-	for _, e := range l.list {
-		if predicate(e) {
-			accepted.list = append(accepted.list, e)
-		} else {
-			rejected.list = append(rejected.list, e)
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) {
+				accepted.list = append(accepted.list, e)
+			} else {
+				rejected.list = append(rejected.list, e)
+			}
 		}
 	}
 	return
 }
 
 func (l *BoolList) Detect(predicate func(element bool) bool) bool {
-	for _, e := range l.list {
-		if predicate(e) {
-			return true
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) {
+				return true
+			}
 		}
 	}
 	return false
 }
 
 func (l *BoolList) Count(predicate func(element bool) bool) (count int) {
-	for _, e := range l.list {
-		if predicate(e) {
-			count++
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) {
+				count++
+			}
 		}
 	}
 	return
 }
 
 func (l *BoolList) AnySatisfy(predicate func(element bool) bool) bool {
-	for _, e := range l.list {
-		if predicate(e) {
-			return true
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) {
+				return true
+			}
 		}
 	}
 	return false
 }
 
 func (l *BoolList) AllSatisfy(predicate func(element bool) bool) bool {
-	for _, e := range l.list {
-		if predicate(e) == false {
-			return false
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) == false {
+				return false
+			}
 		}
 	}
 	return true
 }
 
 func (l *BoolList) NoneSatisfy(predicate func(element bool) bool) bool {
-	for _, e := range l.list {
-		if predicate(e) {
-			return false
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) {
+				return false
+			}
 		}
 	}
 	return true
 }
 
 func (l *BoolList) Sorted(compare func(i, j bool) bool) (newList *BoolList) {
-	newList = &BoolList{list: append([]bool{}, l.list...)}
-	sort.Slice(newList.list,
-		func(i, j int) bool {
-			return compare(newList.list[i], newList.list[j])
-		})
+	newList = &BoolList{}
+	if l != nil {
+		newList.list = append([]bool{}, l.list...)
+		sort.Slice(newList.list,
+			func(i, j int) bool {
+				return compare(newList.list[i], newList.list[j])
+			})
+	}
 	return
 }
 

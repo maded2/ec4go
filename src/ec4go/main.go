@@ -39,7 +39,7 @@ func main() {
 		ListName:    *listName,
 		ListType:    *listType,
 	}
-	primitiveTypes := []string{"int", "int8,", "int16", "int32", "int64", "float32", "float64", "bool", "string"}
+	primitiveTypes := []string{"int", "int8,", "int16", "int32", "int64", "float32", "float64", "{{.ListType}}", "bool", "string"}
 
 	primitive := false
 	for _, pt := range primitiveTypes {
@@ -83,106 +83,170 @@ type {{.ListName}} struct {
 // Immutable functions
 
 func (l *{{.ListName}}) NewWith(element {{.ListType}}) (newList *{{.ListName}}) {
-	newList = &{{.ListName}}{list: append(l.list, element)}
-	return
-}
-
-func (l *{{.ListName}}) NewWithout(element {{.ListType}}) (newList *{{.ListName}}) {
 	newList = &{{.ListName}}{}
-	for _, e := range l.list {
-		if e != element {
-			newList.list = append(newList.list, e)
-		}
+	if l != nil {
+		newList.list = append(l.list, element)
+	} else {
+		newList.list = append([]{{.ListType}}{}, element)
 	}
-	return newList
+	return
 }
 
 func (l *{{.ListName}}) NewWithAll(elements []{{.ListType}}) (newList *{{.ListName}}) {
 	newList = &{{.ListName}}{}
-	for _, e1 := range l.list {
-		for _, e2 := range elements {
-			if e1 != e2 {
-				newList.list = append(newList.list, e1)
-				break
+	if l == nil {
+		newList.list = append(l.list, elements...)
+	} else {
+		for _, e1 := range l.list {
+			for _, e2 := range elements {
+				if e1 != e2 {
+					newList.list = append(newList.list, e1)
+					break
+				}
 			}
 		}
 	}
+
 	return newList
+}
+
+func (l *{{.ListName}}) NewWithout(element {{.ListType}}) (newList *{{.ListName}}) {
+	newList = &{{.ListName}}{}
+	if l != nil {
+		for _, e := range l.list {
+			if e != element {
+				newList.list = append(newList.list, e)
+			}
+		}
+	}
+	return
 }
 
 func (l *{{.ListName}}) NewWithoutAll(elements []{{.ListType}}) (newList *{{.ListName}}) {
 	newList = &{{.ListName}}{}
-	for _, e1 := range l.list {
-		found := false
-		for _, e2 := range elements {
-			if e1 == e2 {
-				found = true
-				break
+	if l != nil {
+		for _, e1 := range l.list {
+			found := false
+			for _, e2 := range elements {
+				if e1 == e2 {
+					found = true
+					break
+				}
 			}
-		}
-		if !found {
-			newList.list = append(newList.list, e1)
+			if !found {
+				newList.list = append(newList.list, e1)
+			}
 		}
 	}
 	return newList
 }
 
-func (l *{{.ListName}}) Size() int {
-	return len(l.list)
+func (l *{{.ListName}}) Remove(element {{.ListType}}) (newList *{{.ListName}}) {
+	newList = &{{.ListName}}{}
+	if l != nil {
+		for _, e := range l.list {
+			if e != element {
+				newList.list = append(newList.list, e)
+			}
+		}
+	}
+	return newList
+}
+
+func (l *{{.ListName}}) RemoveAll(elements []{{.ListType}}) (newList *{{.ListName}}) {
+	newList = &{{.ListName}}{}
+	if l != nil {
+		for _, e1 := range l.list {
+			found := false
+			for _, e2 := range elements {
+				if e1 == e2 {
+					found = true
+					break
+				}
+			}
+			if !found {
+				newList.list = append(newList.list, e1)
+			}
+		}
+	}
+	return newList
+}
+
+func (l *{{.ListName}}) Size() (size int) {
+	if l != nil {
+		size = len(l.list)
+	}
+	return
 }
 
 func (l *{{.ListName}}) IsEmpty() bool {
-	return len(l.list) == 0
+	if l != nil {
+		return len(l.list) == 0
+	} else {
+		return true
+	}
 }
 
 func (l *{{.ListName}}) NotEmpty() bool {
-	return len(l.list) > 0
+	if l != nil {
+		return len(l.list) > 0
+	} else {
+		return false
+	}
 }
 
 func (l *{{.ListName}}) GetAny() (result {{.ListType}}) {
-	if len(l.list) > 0 {
+	if l != nil && len(l.list) > 0 {
 		result = l.list[rand.Intn(len(l.list)-1)]
 	}
 	return
 }
 
 func (l *{{.ListName}}) Contains(element {{.ListType}}) bool {
-	for _, e1 := range l.list {
-		if e1 == element {
-			return true
+	if l != nil {
+		for _, e1 := range l.list {
+			if e1 == element {
+				return true
+			}
 		}
 	}
 	return false
 }
 
 func (l *{{.ListName}}) ContainsAll(elements []{{.ListType}}) bool {
-	n := 0
-	for _, e1 := range l.list {
-		for _, e2 := range elements {
-			if e1 == e2 {
-				n++
-				break
+	if l != nil {
+		n := 0
+		for _, e1 := range l.list {
+			for _, e2 := range elements {
+				if e1 == e2 {
+					n++
+					break
+				}
 			}
-		}
-		if n == len(elements) {
-			return true
+			if n == len(elements) {
+				return true
+			}
 		}
 	}
 	return false
 }
 
 func (l *{{.ListName}}) Each(procedure func(element {{.ListType}})) *{{.ListName}} {
-	for _, e := range l.list {
-		procedure(e)
+	if l != nil {
+		for _, e := range l.list {
+			procedure(e)
+		}
 	}
 	return l
 }
 
 func (l *{{.ListName}}) Select(predicate func(element {{.ListType}}) bool) (newList *{{.ListName}}) {
 	newList = &{{.ListName}}{}
-	for _, e := range l.list {
-		if predicate(e) {
-			newList.list = append(newList.list, e)
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) {
+				newList.list = append(newList.list, e)
+			}
 		}
 	}
 	return
@@ -190,9 +254,11 @@ func (l *{{.ListName}}) Select(predicate func(element {{.ListType}}) bool) (newL
 
 func (l *{{.ListName}}) Reject(predicate func(element {{.ListType}}) bool) (newList *{{.ListName}}) {
 	newList = &{{.ListName}}{}
-	for _, e := range l.list {
-		if predicate(e) == false {
-			newList.list = append(newList.list, e)
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) == false {
+				newList.list = append(newList.list, e)
+			}
 		}
 	}
 	return
@@ -200,67 +266,82 @@ func (l *{{.ListName}}) Reject(predicate func(element {{.ListType}}) bool) (newL
 
 func (l *{{.ListName}}) Partition(predicate func(element {{.ListType}}) bool) (accepted, rejected *{{.ListName}}) {
 	accepted, rejected = &{{.ListName}}{}, &{{.ListName}}{}
-	for _, e := range l.list {
-		if predicate(e) {
-			accepted.list = append(accepted.list, e)
-		} else {
-			rejected.list = append(rejected.list, e)
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) {
+				accepted.list = append(accepted.list, e)
+			} else {
+				rejected.list = append(rejected.list, e)
+			}
 		}
 	}
 	return
 }
 
 func (l *{{.ListName}}) Detect(predicate func(element {{.ListType}}) bool) bool {
-	for _, e := range l.list {
-		if predicate(e) {
-			return true
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) {
+				return true
+			}
 		}
 	}
 	return false
 }
 
 func (l *{{.ListName}}) Count(predicate func(element {{.ListType}}) bool) (count int) {
-	for _, e := range l.list {
-		if predicate(e) {
-			count++
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) {
+				count++
+			}
 		}
 	}
 	return
 }
 
 func (l *{{.ListName}}) AnySatisfy(predicate func(element {{.ListType}}) bool) bool {
-	for _, e := range l.list {
-		if predicate(e) {
-			return true
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) {
+				return true
+			}
 		}
 	}
 	return false
 }
 
 func (l *{{.ListName}}) AllSatisfy(predicate func(element {{.ListType}}) bool) bool {
-	for _, e := range l.list {
-		if predicate(e) == false {
-			return false
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) == false {
+				return false
+			}
 		}
 	}
 	return true
 }
 
 func (l *{{.ListName}}) NoneSatisfy(predicate func(element {{.ListType}}) bool) bool {
-	for _, e := range l.list {
-		if predicate(e) {
-			return false
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) {
+				return false
+			}
 		}
 	}
 	return true
 }
 
 func (l *{{.ListName}}) Sorted(compare func(i, j {{.ListType}}) bool) (newList *{{.ListName}}) {
-	newList = &{{.ListName}}{list: append([]{{.ListType}}{}, l.list...)}
-	sort.Slice(newList.list,
-		func(i, j int) bool {
-			return compare(newList.list[i], newList.list[j])
-		})
+	newList = &{{.ListName}}{}
+	if l != nil {
+		newList.list = append([]{{.ListType}}{}, l.list...)
+		sort.Slice(newList.list,
+			func(i, j int) bool {
+				return compare(newList.list[i], newList.list[j])
+			})
+	}
 	return
 }
 

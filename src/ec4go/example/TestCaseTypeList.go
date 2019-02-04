@@ -16,106 +16,170 @@ type TestCaseTypeList struct {
 // Immutable functions
 
 func (l *TestCaseTypeList) NewWith(element *TestCaseType) (newList *TestCaseTypeList) {
-	newList = &TestCaseTypeList{list: append(l.list, element)}
-	return
-}
-
-func (l *TestCaseTypeList) NewWithout(element *TestCaseType) (newList *TestCaseTypeList) {
 	newList = &TestCaseTypeList{}
-	for _, e := range l.list {
-		if e != element {
-			newList.list = append(newList.list, e)
-		}
+	if l != nil {
+		newList.list = append(l.list, element)
+	} else {
+		newList.list = append([]*TestCaseType{}, element)
 	}
-	return newList
+	return
 }
 
 func (l *TestCaseTypeList) NewWithAll(elements []*TestCaseType) (newList *TestCaseTypeList) {
 	newList = &TestCaseTypeList{}
-	for _, e1 := range l.list {
-		for _, e2 := range elements {
-			if e1 != e2 {
-				newList.list = append(newList.list, e1)
-				break
+	if l == nil {
+		newList.list = append(l.list, elements...)
+	} else {
+		for _, e1 := range l.list {
+			for _, e2 := range elements {
+				if e1 != e2 {
+					newList.list = append(newList.list, e1)
+					break
+				}
 			}
 		}
 	}
+
 	return newList
+}
+
+func (l *TestCaseTypeList) NewWithout(element *TestCaseType) (newList *TestCaseTypeList) {
+	newList = &TestCaseTypeList{}
+	if l != nil {
+		for _, e := range l.list {
+			if e != element {
+				newList.list = append(newList.list, e)
+			}
+		}
+	}
+	return
 }
 
 func (l *TestCaseTypeList) NewWithoutAll(elements []*TestCaseType) (newList *TestCaseTypeList) {
 	newList = &TestCaseTypeList{}
-	for _, e1 := range l.list {
-		found := false
-		for _, e2 := range elements {
-			if e1 == e2 {
-				found = true
-				break
+	if l != nil {
+		for _, e1 := range l.list {
+			found := false
+			for _, e2 := range elements {
+				if e1 == e2 {
+					found = true
+					break
+				}
 			}
-		}
-		if !found {
-			newList.list = append(newList.list, e1)
+			if !found {
+				newList.list = append(newList.list, e1)
+			}
 		}
 	}
 	return newList
 }
 
-func (l *TestCaseTypeList) Size() int {
-	return len(l.list)
+func (l *TestCaseTypeList) Remove(element *TestCaseType) (newList *TestCaseTypeList) {
+	newList = &TestCaseTypeList{}
+	if l != nil {
+		for _, e := range l.list {
+			if e != element {
+				newList.list = append(newList.list, e)
+			}
+		}
+	}
+	return newList
+}
+
+func (l *TestCaseTypeList) RemoveAll(elements []*TestCaseType) (newList *TestCaseTypeList) {
+	newList = &TestCaseTypeList{}
+	if l != nil {
+		for _, e1 := range l.list {
+			found := false
+			for _, e2 := range elements {
+				if e1 == e2 {
+					found = true
+					break
+				}
+			}
+			if !found {
+				newList.list = append(newList.list, e1)
+			}
+		}
+	}
+	return newList
+}
+
+func (l *TestCaseTypeList) Size() (size int) {
+	if l != nil {
+		size = len(l.list)
+	}
+	return
 }
 
 func (l *TestCaseTypeList) IsEmpty() bool {
-	return len(l.list) == 0
+	if l != nil {
+		return len(l.list) == 0
+	} else {
+		return true
+	}
 }
 
 func (l *TestCaseTypeList) NotEmpty() bool {
-	return len(l.list) > 0
+	if l != nil {
+		return len(l.list) > 0
+	} else {
+		return false
+	}
 }
 
 func (l *TestCaseTypeList) GetAny() (result *TestCaseType) {
-	if len(l.list) > 0 {
+	if l != nil && len(l.list) > 0 {
 		result = l.list[rand.Intn(len(l.list)-1)]
 	}
 	return
 }
 
 func (l *TestCaseTypeList) Contains(element *TestCaseType) bool {
-	for _, e1 := range l.list {
-		if e1 == element {
-			return true
+	if l != nil {
+		for _, e1 := range l.list {
+			if e1 == element {
+				return true
+			}
 		}
 	}
 	return false
 }
 
 func (l *TestCaseTypeList) ContainsAll(elements []*TestCaseType) bool {
-	n := 0
-	for _, e1 := range l.list {
-		for _, e2 := range elements {
-			if e1 == e2 {
-				n++
-				break
+	if l != nil {
+		n := 0
+		for _, e1 := range l.list {
+			for _, e2 := range elements {
+				if e1 == e2 {
+					n++
+					break
+				}
 			}
-		}
-		if n == len(elements) {
-			return true
+			if n == len(elements) {
+				return true
+			}
 		}
 	}
 	return false
 }
 
 func (l *TestCaseTypeList) Each(procedure func(element *TestCaseType)) *TestCaseTypeList {
-	for _, e := range l.list {
-		procedure(e)
+	if l != nil {
+		for _, e := range l.list {
+			procedure(e)
+		}
 	}
 	return l
 }
 
 func (l *TestCaseTypeList) Select(predicate func(element *TestCaseType) bool) (newList *TestCaseTypeList) {
 	newList = &TestCaseTypeList{}
-	for _, e := range l.list {
-		if predicate(e) {
-			newList.list = append(newList.list, e)
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) {
+				newList.list = append(newList.list, e)
+			}
 		}
 	}
 	return
@@ -123,9 +187,11 @@ func (l *TestCaseTypeList) Select(predicate func(element *TestCaseType) bool) (n
 
 func (l *TestCaseTypeList) Reject(predicate func(element *TestCaseType) bool) (newList *TestCaseTypeList) {
 	newList = &TestCaseTypeList{}
-	for _, e := range l.list {
-		if predicate(e) == false {
-			newList.list = append(newList.list, e)
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) == false {
+				newList.list = append(newList.list, e)
+			}
 		}
 	}
 	return
@@ -133,67 +199,82 @@ func (l *TestCaseTypeList) Reject(predicate func(element *TestCaseType) bool) (n
 
 func (l *TestCaseTypeList) Partition(predicate func(element *TestCaseType) bool) (accepted, rejected *TestCaseTypeList) {
 	accepted, rejected = &TestCaseTypeList{}, &TestCaseTypeList{}
-	for _, e := range l.list {
-		if predicate(e) {
-			accepted.list = append(accepted.list, e)
-		} else {
-			rejected.list = append(rejected.list, e)
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) {
+				accepted.list = append(accepted.list, e)
+			} else {
+				rejected.list = append(rejected.list, e)
+			}
 		}
 	}
 	return
 }
 
 func (l *TestCaseTypeList) Detect(predicate func(element *TestCaseType) bool) bool {
-	for _, e := range l.list {
-		if predicate(e) {
-			return true
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) {
+				return true
+			}
 		}
 	}
 	return false
 }
 
 func (l *TestCaseTypeList) Count(predicate func(element *TestCaseType) bool) (count int) {
-	for _, e := range l.list {
-		if predicate(e) {
-			count++
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) {
+				count++
+			}
 		}
 	}
 	return
 }
 
 func (l *TestCaseTypeList) AnySatisfy(predicate func(element *TestCaseType) bool) bool {
-	for _, e := range l.list {
-		if predicate(e) {
-			return true
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) {
+				return true
+			}
 		}
 	}
 	return false
 }
 
 func (l *TestCaseTypeList) AllSatisfy(predicate func(element *TestCaseType) bool) bool {
-	for _, e := range l.list {
-		if predicate(e) == false {
-			return false
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) == false {
+				return false
+			}
 		}
 	}
 	return true
 }
 
 func (l *TestCaseTypeList) NoneSatisfy(predicate func(element *TestCaseType) bool) bool {
-	for _, e := range l.list {
-		if predicate(e) {
-			return false
+	if l != nil {
+		for _, e := range l.list {
+			if predicate(e) {
+				return false
+			}
 		}
 	}
 	return true
 }
 
 func (l *TestCaseTypeList) Sorted(compare func(i, j *TestCaseType) bool) (newList *TestCaseTypeList) {
-	newList = &TestCaseTypeList{list: append([]*TestCaseType{}, l.list...)}
-	sort.Slice(newList.list,
-		func(i, j int) bool {
-			return compare(newList.list[i], newList.list[j])
-		})
+	newList = &TestCaseTypeList{}
+	if l != nil {
+		newList.list = append([]*TestCaseType{}, l.list...)
+		sort.Slice(newList.list,
+			func(i, j int) bool {
+				return compare(newList.list[i], newList.list[j])
+			})
+	}
 	return
 }
 
