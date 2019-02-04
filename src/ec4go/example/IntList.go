@@ -4,7 +4,10 @@
  */
 package example
 
-import "math/rand"
+import (
+	"math/rand"
+	"sort"
+)
 
 type IntList struct {
 	list []int
@@ -185,6 +188,15 @@ func (l *IntList) NoneSatisfy(predicate func(element int) bool) bool {
 	return true
 }
 
+func (l *IntList) Sorted(compare func(i, j int) bool) (newList *IntList) {
+	newList = &IntList{list: append([]int{}, l.list...)}
+	sort.Slice(newList.list,
+		func(i, j int) bool {
+			return compare(newList.list[i], newList.list[j])
+		})
+	return
+}
+
 // Mutable functions
 func (l *IntList) NewEmpty() (newList *IntList) {
 	newList = &IntList{}
@@ -211,7 +223,7 @@ func (l *IntList) WithAll(elements []int) *IntList {
 }
 
 func (l *IntList) WithoutAll(elements []int) *IntList {
-	for __, element := range elements {
+	for _, element := range elements {
 		for n, e := range l.list {
 			if e == element {
 				l.list = append(l.list[:n], l.list[n+1:]...)
@@ -221,7 +233,7 @@ func (l *IntList) WithoutAll(elements []int) *IntList {
 	return l
 }
 
-func (l *IntList) RemoveIf(predicate func(element int) bool) (l *IntList) {
+func (l *IntList) RemoveIf(predicate func(element int) bool) *IntList {
 	for n, e := range l.list {
 		if predicate(e) {
 			l.list = append(l.list[:n], l.list[n+1:]...)
@@ -241,7 +253,7 @@ func (l *IntList) RemoveAll(elements []int) *IntList {
 func (l *IntList) RetainAll(elements []int) *IntList {
 	for n, e := range l.list {
 		retain := true
-		for __, element := range elements {
+		for _, element := range elements {
 			if e != element {
 				retain = false
 				break

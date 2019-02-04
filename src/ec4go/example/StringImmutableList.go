@@ -4,20 +4,23 @@
  */
 package example
 
-import "math/rand"
+import (
+	"math/rand"
+	"sort"
+)
 
 type StringImmutableList struct {
-	list []*string
+	list []string
 }
 
 // Immutable functions
 
-func (l *StringImmutableList) NewWith(element *string) (newList *StringImmutableList) {
+func (l *StringImmutableList) NewWith(element string) (newList *StringImmutableList) {
 	newList = &StringImmutableList{list: append(l.list, element)}
 	return
 }
 
-func (l *StringImmutableList) NewWithout(element *string) (newList *StringImmutableList) {
+func (l *StringImmutableList) NewWithout(element string) (newList *StringImmutableList) {
 	newList = &StringImmutableList{}
 	for _, e := range l.list {
 		if e != element {
@@ -27,7 +30,7 @@ func (l *StringImmutableList) NewWithout(element *string) (newList *StringImmuta
 	return newList
 }
 
-func (l *StringImmutableList) NewWithAll(elements []*string) (newList *StringImmutableList) {
+func (l *StringImmutableList) NewWithAll(elements []string) (newList *StringImmutableList) {
 	newList = &StringImmutableList{}
 	for _, e1 := range l.list {
 		for _, e2 := range elements {
@@ -40,7 +43,7 @@ func (l *StringImmutableList) NewWithAll(elements []*string) (newList *StringImm
 	return newList
 }
 
-func (l *StringImmutableList) NewWithoutAll(elements []*string) (newList *StringImmutableList) {
+func (l *StringImmutableList) NewWithoutAll(elements []string) (newList *StringImmutableList) {
 	newList = &StringImmutableList{}
 	for _, e1 := range l.list {
 		found := false
@@ -69,14 +72,14 @@ func (l *StringImmutableList) NotEmpty() bool {
 	return len(l.list) > 0
 }
 
-func (l *StringImmutableList) GetAny() (result *string) {
+func (l *StringImmutableList) GetAny() (result string) {
 	if len(l.list) > 0 {
 		result = l.list[rand.Intn(len(l.list)-1)]
 	}
 	return
 }
 
-func (l *StringImmutableList) Contains(element *string) bool {
+func (l *StringImmutableList) Contains(element string) bool {
 	for _, e1 := range l.list {
 		if e1 == element {
 			return true
@@ -85,7 +88,7 @@ func (l *StringImmutableList) Contains(element *string) bool {
 	return false
 }
 
-func (l *StringImmutableList) ContainsAll(elements []*string) bool {
+func (l *StringImmutableList) ContainsAll(elements []string) bool {
 	n := 0
 	for _, e1 := range l.list {
 		for _, e2 := range elements {
@@ -101,14 +104,14 @@ func (l *StringImmutableList) ContainsAll(elements []*string) bool {
 	return false
 }
 
-func (l *StringImmutableList) Each(procedure func(element *string)) *StringImmutableList {
+func (l *StringImmutableList) Each(procedure func(element string)) *StringImmutableList {
 	for _, e := range l.list {
 		procedure(e)
 	}
 	return l
 }
 
-func (l *StringImmutableList) Select(predicate func(element *string) bool) (newList *StringImmutableList) {
+func (l *StringImmutableList) Select(predicate func(element string) bool) (newList *StringImmutableList) {
 	newList = &StringImmutableList{}
 	for _, e := range l.list {
 		if predicate(e) {
@@ -118,7 +121,7 @@ func (l *StringImmutableList) Select(predicate func(element *string) bool) (newL
 	return
 }
 
-func (l *StringImmutableList) Reject(predicate func(element *string) bool) (newList *StringImmutableList) {
+func (l *StringImmutableList) Reject(predicate func(element string) bool) (newList *StringImmutableList) {
 	newList = &StringImmutableList{}
 	for _, e := range l.list {
 		if predicate(e) == false {
@@ -128,7 +131,7 @@ func (l *StringImmutableList) Reject(predicate func(element *string) bool) (newL
 	return
 }
 
-func (l *StringImmutableList) Partition(predicate func(element *string) bool) (accepted, rejected *StringImmutableList) {
+func (l *StringImmutableList) Partition(predicate func(element string) bool) (accepted, rejected *StringImmutableList) {
 	accepted, rejected = &StringImmutableList{}, &StringImmutableList{}
 	for _, e := range l.list {
 		if predicate(e) {
@@ -140,7 +143,7 @@ func (l *StringImmutableList) Partition(predicate func(element *string) bool) (a
 	return
 }
 
-func (l *StringImmutableList) Detect(predicate func(element *string) bool) bool {
+func (l *StringImmutableList) Detect(predicate func(element string) bool) bool {
 	for _, e := range l.list {
 		if predicate(e) {
 			return true
@@ -149,7 +152,7 @@ func (l *StringImmutableList) Detect(predicate func(element *string) bool) bool 
 	return false
 }
 
-func (l *StringImmutableList) Count(predicate func(element *string) bool) (count int) {
+func (l *StringImmutableList) Count(predicate func(element string) bool) (count int) {
 	for _, e := range l.list {
 		if predicate(e) {
 			count++
@@ -158,7 +161,7 @@ func (l *StringImmutableList) Count(predicate func(element *string) bool) (count
 	return
 }
 
-func (l *StringImmutableList) AnySatisfy(predicate func(element *string) bool) bool {
+func (l *StringImmutableList) AnySatisfy(predicate func(element string) bool) bool {
 	for _, e := range l.list {
 		if predicate(e) {
 			return true
@@ -167,7 +170,7 @@ func (l *StringImmutableList) AnySatisfy(predicate func(element *string) bool) b
 	return false
 }
 
-func (l *StringImmutableList) AllSatisfy(predicate func(element *string) bool) bool {
+func (l *StringImmutableList) AllSatisfy(predicate func(element string) bool) bool {
 	for _, e := range l.list {
 		if predicate(e) == false {
 			return false
@@ -176,11 +179,20 @@ func (l *StringImmutableList) AllSatisfy(predicate func(element *string) bool) b
 	return true
 }
 
-func (l *StringImmutableList) NoneSatisfy(predicate func(element *string) bool) bool {
+func (l *StringImmutableList) NoneSatisfy(predicate func(element string) bool) bool {
 	for _, e := range l.list {
 		if predicate(e) {
 			return false
 		}
 	}
 	return true
+}
+
+func (l *StringImmutableList) Sorted(compare func(i, j string) bool) (newList *StringImmutableList) {
+	newList = &StringImmutableList{list: append([]string{}, l.list...)}
+	sort.Slice(newList.list,
+		func(i, j int) bool {
+			return compare(newList.list[i], newList.list[j])
+		})
+	return
 }

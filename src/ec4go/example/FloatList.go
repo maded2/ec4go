@@ -4,7 +4,10 @@
  */
 package example
 
-import "math/rand"
+import (
+	"math/rand"
+	"sort"
+)
 
 type FloatList struct {
 	list []float64
@@ -185,6 +188,15 @@ func (l *FloatList) NoneSatisfy(predicate func(element float64) bool) bool {
 	return true
 }
 
+func (l *FloatList) Sorted(compare func(i, j float64) bool) (newList *FloatList) {
+	newList = &FloatList{list: append([]float64{}, l.list...)}
+	sort.Slice(newList.list,
+		func(i, j int) bool {
+			return compare(newList.list[i], newList.list[j])
+		})
+	return
+}
+
 // Mutable functions
 func (l *FloatList) NewEmpty() (newList *FloatList) {
 	newList = &FloatList{}
@@ -211,7 +223,7 @@ func (l *FloatList) WithAll(elements []float64) *FloatList {
 }
 
 func (l *FloatList) WithoutAll(elements []float64) *FloatList {
-	for __, element := range elements {
+	for _, element := range elements {
 		for n, e := range l.list {
 			if e == element {
 				l.list = append(l.list[:n], l.list[n+1:]...)
@@ -221,7 +233,7 @@ func (l *FloatList) WithoutAll(elements []float64) *FloatList {
 	return l
 }
 
-func (l *FloatList) RemoveIf(predicate func(element float64) bool) (l *FloatList) {
+func (l *FloatList) RemoveIf(predicate func(element float64) bool) *FloatList {
 	for n, e := range l.list {
 		if predicate(e) {
 			l.list = append(l.list[:n], l.list[n+1:]...)
@@ -241,7 +253,7 @@ func (l *FloatList) RemoveAll(elements []float64) *FloatList {
 func (l *FloatList) RetainAll(elements []float64) *FloatList {
 	for n, e := range l.list {
 		retain := true
-		for __, element := range elements {
+		for _, element := range elements {
 			if e != element {
 				retain = false
 				break

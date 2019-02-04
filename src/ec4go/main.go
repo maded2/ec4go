@@ -71,7 +71,10 @@ var immutableListTemplate = `/*
 */
 package {{.PackageName}}
 
-import "math/rand"
+import (
+	"math/rand"
+	"sort"
+)
 
 type {{.ListName}} struct {
 	list []{{.ListType}}
@@ -252,6 +255,16 @@ func (l *{{.ListName}}) NoneSatisfy(predicate func(element {{.ListType}}) bool) 
 	return true
 }
 
+func (l *{{.ListName}}) Sorted(compare func(i, j {{.ListType}}) bool) (newList *{{.ListName}}) {
+	newList = &{{.ListName}}{list: append([]{{.ListType}}{}, l.list...)}
+	sort.Slice(newList.list,
+		func(i, j int) bool {
+			return compare(newList.list[i], newList.list[j])
+		})
+	return
+}
+
+
 `
 
 var mutableListTemplate = `
@@ -282,7 +295,7 @@ func (l *{{.ListName}}) WithAll(elements []{{.ListType}}) *{{.ListName}} {
 }
 
 func (l *{{.ListName}}) WithoutAll(elements []{{.ListType}}) *{{.ListName}} {
-	for __, element := range elements {
+	for _, element := range elements {
 		for n, e := range l.list {
 			if e == element {
 				l.list = append(l.list[:n], l.list[n+1:]...)
@@ -292,7 +305,7 @@ func (l *{{.ListName}}) WithoutAll(elements []{{.ListType}}) *{{.ListName}} {
 	return l
 }
 
-func (l *{{.ListName}}) RemoveIf(predicate func(element {{.ListType}}) bool) (l *{{.ListName}}) {
+func (l *{{.ListName}}) RemoveIf(predicate func(element {{.ListType}}) bool) *{{.ListName}} {
 	for n, e := range l.list {
 		if predicate(e) {
 			l.list = append(l.list[:n], l.list[n+1:]...)
@@ -312,7 +325,7 @@ func (l *{{.ListName}}) RemoveAll(elements []{{.ListType}}) *{{.ListName}} {
 func (l *{{.ListName}}) RetainAll(elements []{{.ListType}}) *{{.ListName}} {
 	for n, e := range l.list {
 		retain := true
-		for __, element := range elements {
+		for _, element := range elements {
 			if e != element {
 				retain = false
 				break

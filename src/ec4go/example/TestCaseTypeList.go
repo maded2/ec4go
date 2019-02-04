@@ -4,7 +4,10 @@
  */
 package example
 
-import "math/rand"
+import (
+	"math/rand"
+	"sort"
+)
 
 type TestCaseTypeList struct {
 	list []*TestCaseType
@@ -185,6 +188,15 @@ func (l *TestCaseTypeList) NoneSatisfy(predicate func(element *TestCaseType) boo
 	return true
 }
 
+func (l *TestCaseTypeList) Sorted(compare func(i, j *TestCaseType) bool) (newList *TestCaseTypeList) {
+	newList = &TestCaseTypeList{list: append([]*TestCaseType{}, l.list...)}
+	sort.Slice(newList.list,
+		func(i, j int) bool {
+			return compare(newList.list[i], newList.list[j])
+		})
+	return
+}
+
 // Mutable functions
 func (l *TestCaseTypeList) NewEmpty() (newList *TestCaseTypeList) {
 	newList = &TestCaseTypeList{}
@@ -211,7 +223,7 @@ func (l *TestCaseTypeList) WithAll(elements []*TestCaseType) *TestCaseTypeList {
 }
 
 func (l *TestCaseTypeList) WithoutAll(elements []*TestCaseType) *TestCaseTypeList {
-	for __, element := range elements {
+	for _, element := range elements {
 		for n, e := range l.list {
 			if e == element {
 				l.list = append(l.list[:n], l.list[n+1:]...)
@@ -221,7 +233,7 @@ func (l *TestCaseTypeList) WithoutAll(elements []*TestCaseType) *TestCaseTypeLis
 	return l
 }
 
-func (l *TestCaseTypeList) RemoveIf(predicate func(element *TestCaseType) bool) (l *TestCaseTypeList) {
+func (l *TestCaseTypeList) RemoveIf(predicate func(element *TestCaseType) bool) *TestCaseTypeList {
 	for n, e := range l.list {
 		if predicate(e) {
 			l.list = append(l.list[:n], l.list[n+1:]...)
@@ -241,7 +253,7 @@ func (l *TestCaseTypeList) RemoveAll(elements []*TestCaseType) *TestCaseTypeList
 func (l *TestCaseTypeList) RetainAll(elements []*TestCaseType) *TestCaseTypeList {
 	for n, e := range l.list {
 		retain := true
-		for __, element := range elements {
+		for _, element := range elements {
 			if e != element {
 				retain = false
 				break

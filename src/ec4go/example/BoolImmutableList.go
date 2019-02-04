@@ -4,7 +4,10 @@
  */
 package example
 
-import "math/rand"
+import (
+	"math/rand"
+	"sort"
+)
 
 type BoolImmutableList struct {
 	list []bool
@@ -183,4 +186,13 @@ func (l *BoolImmutableList) NoneSatisfy(predicate func(element bool) bool) bool 
 		}
 	}
 	return true
+}
+
+func (l *BoolImmutableList) Sorted(compare func(i, j bool) bool) (newList *BoolImmutableList) {
+	newList = &BoolImmutableList{list: append([]bool{}, l.list...)}
+	sort.Slice(newList.list,
+		func(i, j int) bool {
+			return compare(newList.list[i], newList.list[j])
+		})
+	return
 }

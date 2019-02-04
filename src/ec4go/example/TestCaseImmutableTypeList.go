@@ -4,7 +4,10 @@
  */
 package example
 
-import "math/rand"
+import (
+	"math/rand"
+	"sort"
+)
 
 type TestCaseImmutableTypeList struct {
 	list []*TestCaseType
@@ -183,4 +186,13 @@ func (l *TestCaseImmutableTypeList) NoneSatisfy(predicate func(element *TestCase
 		}
 	}
 	return true
+}
+
+func (l *TestCaseImmutableTypeList) Sorted(compare func(i, j *TestCaseType) bool) (newList *TestCaseImmutableTypeList) {
+	newList = &TestCaseImmutableTypeList{list: append([]*TestCaseType{}, l.list...)}
+	sort.Slice(newList.list,
+		func(i, j int) bool {
+			return compare(newList.list[i], newList.list[j])
+		})
+	return
 }

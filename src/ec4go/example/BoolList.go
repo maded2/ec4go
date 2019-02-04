@@ -4,7 +4,10 @@
  */
 package example
 
-import "math/rand"
+import (
+	"math/rand"
+	"sort"
+)
 
 type BoolList struct {
 	list []bool
@@ -185,6 +188,15 @@ func (l *BoolList) NoneSatisfy(predicate func(element bool) bool) bool {
 	return true
 }
 
+func (l *BoolList) Sorted(compare func(i, j bool) bool) (newList *BoolList) {
+	newList = &BoolList{list: append([]bool{}, l.list...)}
+	sort.Slice(newList.list,
+		func(i, j int) bool {
+			return compare(newList.list[i], newList.list[j])
+		})
+	return
+}
+
 // Mutable functions
 func (l *BoolList) NewEmpty() (newList *BoolList) {
 	newList = &BoolList{}
@@ -211,7 +223,7 @@ func (l *BoolList) WithAll(elements []bool) *BoolList {
 }
 
 func (l *BoolList) WithoutAll(elements []bool) *BoolList {
-	for __, element := range elements {
+	for _, element := range elements {
 		for n, e := range l.list {
 			if e == element {
 				l.list = append(l.list[:n], l.list[n+1:]...)
@@ -221,7 +233,7 @@ func (l *BoolList) WithoutAll(elements []bool) *BoolList {
 	return l
 }
 
-func (l *BoolList) RemoveIf(predicate func(element bool) bool) (l *BoolList) {
+func (l *BoolList) RemoveIf(predicate func(element bool) bool) *BoolList {
 	for n, e := range l.list {
 		if predicate(e) {
 			l.list = append(l.list[:n], l.list[n+1:]...)
@@ -241,7 +253,7 @@ func (l *BoolList) RemoveAll(elements []bool) *BoolList {
 func (l *BoolList) RetainAll(elements []bool) *BoolList {
 	for n, e := range l.list {
 		retain := true
-		for __, element := range elements {
+		for _, element := range elements {
 			if e != element {
 				retain = false
 				break
