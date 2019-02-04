@@ -28,7 +28,7 @@ func (l *TestCaseImmutableTypeList) NewWith(element *TestCaseType) (newList *Tes
 func (l *TestCaseImmutableTypeList) NewWithAll(elements []*TestCaseType) (newList *TestCaseImmutableTypeList) {
 	newList = &TestCaseImmutableTypeList{}
 	if l == nil {
-		newList.list = append(l.list, elements...)
+		newList.list = append([]*TestCaseType{}, elements...)
 	} else {
 		for _, e1 := range l.list {
 			for _, e2 := range elements {

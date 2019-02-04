@@ -28,7 +28,7 @@ func (l *BoolList) NewWith(element bool) (newList *BoolList) {
 func (l *BoolList) NewWithAll(elements []bool) (newList *BoolList) {
 	newList = &BoolList{}
 	if l == nil {
-		newList.list = append(l.list, elements...)
+		newList.list = append([]bool{}, elements...)
 	} else {
 		for _, e1 := range l.list {
 			for _, e2 := range elements {
@@ -325,10 +325,6 @@ func (l *BoolList) RemoveIf(predicate func(element bool) bool) *BoolList {
 
 func (l *BoolList) AddAll(elements []bool) *BoolList {
 	return l.WithAll(elements)
-}
-
-func (l *BoolList) RemoveAll(elements []bool) *BoolList {
-	return l.WithoutAll(elements)
 }
 
 func (l *BoolList) RetainAll(elements []bool) *BoolList {

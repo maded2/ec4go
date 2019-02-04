@@ -28,7 +28,7 @@ func (l *FloatList) NewWith(element float64) (newList *FloatList) {
 func (l *FloatList) NewWithAll(elements []float64) (newList *FloatList) {
 	newList = &FloatList{}
 	if l == nil {
-		newList.list = append(l.list, elements...)
+		newList.list = append([]float64{}, elements...)
 	} else {
 		for _, e1 := range l.list {
 			for _, e2 := range elements {
@@ -325,10 +325,6 @@ func (l *FloatList) RemoveIf(predicate func(element float64) bool) *FloatList {
 
 func (l *FloatList) AddAll(elements []float64) *FloatList {
 	return l.WithAll(elements)
-}
-
-func (l *FloatList) RemoveAll(elements []float64) *FloatList {
-	return l.WithoutAll(elements)
 }
 
 func (l *FloatList) RetainAll(elements []float64) *FloatList {

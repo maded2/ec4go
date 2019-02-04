@@ -28,7 +28,7 @@ func (l *IntImmutableList) NewWith(element int) (newList *IntImmutableList) {
 func (l *IntImmutableList) NewWithAll(elements []int) (newList *IntImmutableList) {
 	newList = &IntImmutableList{}
 	if l == nil {
-		newList.list = append(l.list, elements...)
+		newList.list = append([]int{}, elements...)
 	} else {
 		for _, e1 := range l.list {
 			for _, e2 := range elements {

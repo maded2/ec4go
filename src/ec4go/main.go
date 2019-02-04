@@ -21,41 +21,44 @@ func main() {
 		return
 	}
 
-	fileName := fmt.Sprintf("%s.go", flag.Lookup("name").Value.String())
-	file, err := os.Create(fileName)
-	if err != nil {
-		log.Fatalf("Unable to create file: %s - %s", fileName, err)
-	}
-	w := bufio.NewWriter(file)
 	immutableListTemplate := template.Must(template.New("immutableListTemplate").Parse(immutableListTemplate))
 
 	type value struct {
 		PackageName string
 		ListName    string
 		ListType    string
+		Primitive   bool
+		Mutable     bool
 	}
 	v := value{
 		PackageName: *packageName,
 		ListName:    *listName,
 		ListType:    *listType,
+		Mutable:     *addMutableFunctions,
 	}
 	primitiveTypes := []string{"int", "int8,", "int16", "int32", "int64", "float32", "float64", "{{.ListType}}", "bool", "string"}
 
-	primitive := false
+	v.Primitive = false
 	for _, pt := range primitiveTypes {
 		if v.ListType == pt {
-			primitive = true
+			v.Primitive = true
 			break
 		}
 	}
-	if !primitive {
+	if !v.Primitive {
 		v.ListType = "*" + v.ListType
 	}
 
+	fileName := fmt.Sprintf("%s.go", flag.Lookup("name").Value.String())
+	file, err := os.Create(fileName)
+	if err != nil {
+		log.Fatalf("Unable to create file: %s - %s", fileName, err)
+	}
+	w := bufio.NewWriter(file)
 	if err = immutableListTemplate.Execute(w, v); err != nil {
 		log.Fatalf("Failed to create[%s]: %s", fileName, err)
 	}
-	if *addMutableFunctions {
+	if v.Mutable {
 		mutableListTemplate := template.Must(template.New("mutableListTemplate").Parse(mutableListTemplate))
 		if err = mutableListTemplate.Execute(w, v); err != nil {
 			log.Fatalf("Failed to add mutable functions[%s]: %s", fileName, err)
@@ -63,6 +66,20 @@ func main() {
 	}
 	w.Flush()
 	file.Close()
+
+	fileName = fmt.Sprintf("%s_test.go", flag.Lookup("name").Value.String())
+	file, err = os.Create(fileName)
+	if err != nil {
+		log.Fatalf("Unable to create file: %s - %s", fileName, err)
+	}
+	w = bufio.NewWriter(file)
+	testCasesTemplate := template.Must(template.New("testCasesTemplate").Parse(testCases))
+	if err = testCasesTemplate.Execute(w, v); err != nil {
+		log.Fatalf("Failed to create[%s]: %s", fileName, err)
+	}
+	w.Flush()
+	file.Close()
+
 }
 
 var immutableListTemplate = `/*
@@ -95,7 +112,7 @@ func (l *{{.ListName}}) NewWith(element {{.ListType}}) (newList *{{.ListName}}) 
 func (l *{{.ListName}}) NewWithAll(elements []{{.ListType}}) (newList *{{.ListName}}) {
 	newList = &{{.ListName}}{}
 	if l == nil {
-		newList.list = append(l.list, elements...)
+		newList.list = append([]{{.ListType}}{}, elements...)
 	} else {
 		for _, e1 := range l.list {
 			for _, e2 := range elements {
@@ -399,10 +416,6 @@ func (l *{{.ListName}}) AddAll(elements []{{.ListType}}) *{{.ListName}} {
 	return l.WithAll(elements)
 }
 
-func (l *{{.ListName}}) RemoveAll(elements []{{.ListType}}) *{{.ListName}} {
-	return l.WithoutAll(elements)
-}
-
 func (l *{{.ListName}}) RetainAll(elements []{{.ListType}}) *{{.ListName}} {
 	for n, e := range l.list {
 		retain := true
@@ -419,4 +432,48 @@ func (l *{{.ListName}}) RetainAll(elements []{{.ListType}}) *{{.ListName}} {
 	return l
 }
 
+`
+
+var testCases = `/*
+* CODE GENERATED AUTOMATICALLY WITH github.com/maded2/ec4go
+* THIS FILE SHOULD NOT BE EDITED BY HAND
+ */
+package {{.PackageName}}
+
+import (
+	"testing"
+)
+
+func Test{{.ListName}}Count(t *testing.T) {
+	l := (*{{.ListName}})(nil).NewWithAll([]{{.ListType}}{5.0, 4.0, 3.0, 2.0, 1.0})
+
+	if l.Size() != 5 {
+		t.Fail()
+	}
+
+	if l.IsEmpty() {
+		t.Fail()
+	}
+
+	if l.NotEmpty() == false {
+		t.Fail()
+	}
+}
+
+
+func Test{{.ListName}}Sort(t *testing.T) {
+	l := (*{{.ListName}})(nil).NewWithAll([]{{.ListType}}{5.0, 4.0, 3.0, 2.0, 1.0})
+	newList := l.Sorted(func(i, j {{.ListType}}) bool {
+		return i < j
+	})
+
+	var v {{.ListType}}
+	newList.Each(func(element {{.ListType}}) {
+		if element < v {
+			t.Fail()
+		} else {
+			v = element
+		}
+	})
+}
 `

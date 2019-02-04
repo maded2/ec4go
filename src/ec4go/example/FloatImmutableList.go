@@ -28,7 +28,7 @@ func (l *FloatImmutableList) NewWith(element float64) (newList *FloatImmutableLi
 func (l *FloatImmutableList) NewWithAll(elements []float64) (newList *FloatImmutableList) {
 	newList = &FloatImmutableList{}
 	if l == nil {
-		newList.list = append(l.list, elements...)
+		newList.list = append([]float64{}, elements...)
 	} else {
 		for _, e1 := range l.list {
 			for _, e2 := range elements {

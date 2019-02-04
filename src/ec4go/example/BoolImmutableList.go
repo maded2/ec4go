@@ -28,7 +28,7 @@ func (l *BoolImmutableList) NewWith(element bool) (newList *BoolImmutableList) {
 func (l *BoolImmutableList) NewWithAll(elements []bool) (newList *BoolImmutableList) {
 	newList = &BoolImmutableList{}
 	if l == nil {
-		newList.list = append(l.list, elements...)
+		newList.list = append([]bool{}, elements...)
 	} else {
 		for _, e1 := range l.list {
 			for _, e2 := range elements {

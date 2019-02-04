@@ -8,8 +8,8 @@ import (
 	"testing"
 )
 
-func TestFloatImmutableListCount(t *testing.T) {
-	l := (*FloatImmutableList)(nil).NewWithAll([]float64{5.0, 4.0, 3.0, 2.0, 1.0})
+func TestFloatListCount(t *testing.T) {
+	l := (*FloatList)(nil).NewWithAll([]float64{5.0, 4.0, 3.0, 2.0, 1.0})
 
 	if l.Size() != 5 {
 		t.Fail()
@@ -24,8 +24,8 @@ func TestFloatImmutableListCount(t *testing.T) {
 	}
 }
 
-func TestFloatImmutableListSort(t *testing.T) {
-	l := (*FloatImmutableList)(nil).NewWithAll([]float64{5.0, 4.0, 3.0, 2.0, 1.0})
+func TestFloatListSort(t *testing.T) {
+	l := (*FloatList)(nil).NewWithAll([]float64{5.0, 4.0, 3.0, 2.0, 1.0})
 	newList := l.Sorted(func(i, j float64) bool {
 		return i < j
 	})

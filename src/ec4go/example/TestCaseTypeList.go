@@ -28,7 +28,7 @@ func (l *TestCaseTypeList) NewWith(element *TestCaseType) (newList *TestCaseType
 func (l *TestCaseTypeList) NewWithAll(elements []*TestCaseType) (newList *TestCaseTypeList) {
 	newList = &TestCaseTypeList{}
 	if l == nil {
-		newList.list = append(l.list, elements...)
+		newList.list = append([]*TestCaseType{}, elements...)
 	} else {
 		for _, e1 := range l.list {
 			for _, e2 := range elements {
@@ -325,10 +325,6 @@ func (l *TestCaseTypeList) RemoveIf(predicate func(element *TestCaseType) bool) 
 
 func (l *TestCaseTypeList) AddAll(elements []*TestCaseType) *TestCaseTypeList {
 	return l.WithAll(elements)
-}
-
-func (l *TestCaseTypeList) RemoveAll(elements []*TestCaseType) *TestCaseTypeList {
-	return l.WithoutAll(elements)
 }
 
 func (l *TestCaseTypeList) RetainAll(elements []*TestCaseType) *TestCaseTypeList {

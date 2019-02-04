@@ -28,7 +28,7 @@ func (l *IntList) NewWith(element int) (newList *IntList) {
 func (l *IntList) NewWithAll(elements []int) (newList *IntList) {
 	newList = &IntList{}
 	if l == nil {
-		newList.list = append(l.list, elements...)
+		newList.list = append([]int{}, elements...)
 	} else {
 		for _, e1 := range l.list {
 			for _, e2 := range elements {
@@ -325,10 +325,6 @@ func (l *IntList) RemoveIf(predicate func(element int) bool) *IntList {
 
 func (l *IntList) AddAll(elements []int) *IntList {
 	return l.WithAll(elements)
-}
-
-func (l *IntList) RemoveAll(elements []int) *IntList {
-	return l.WithoutAll(elements)
 }
 
 func (l *IntList) RetainAll(elements []int) *IntList {

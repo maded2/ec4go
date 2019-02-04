@@ -28,7 +28,7 @@ func (l *StringList) NewWith(element string) (newList *StringList) {
 func (l *StringList) NewWithAll(elements []string) (newList *StringList) {
 	newList = &StringList{}
 	if l == nil {
-		newList.list = append(l.list, elements...)
+		newList.list = append([]string{}, elements...)
 	} else {
 		for _, e1 := range l.list {
 			for _, e2 := range elements {
@@ -325,10 +325,6 @@ func (l *StringList) RemoveIf(predicate func(element string) bool) *StringList {
 
 func (l *StringList) AddAll(elements []string) *StringList {
 	return l.WithAll(elements)
-}
-
-func (l *StringList) RemoveAll(elements []string) *StringList {
-	return l.WithoutAll(elements)
 }
 
 func (l *StringList) RetainAll(elements []string) *StringList {
