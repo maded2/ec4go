@@ -9,7 +9,7 @@ import (
 )
 
 func TestBoolImmutableListCount(t *testing.T) {
-	l := (*BoolImmutableList)(nil).NewWithAll([]bool{5.0, 4.0, 3.0, 2.0, 1.0})
+	l := (*BoolImmutableList)(nil).NewWithAll(sample_bool)
 
 	if l.Size() != 5 {
 		t.Fail()
@@ -22,20 +22,4 @@ func TestBoolImmutableListCount(t *testing.T) {
 	if l.NotEmpty() == false {
 		t.Fail()
 	}
-}
-
-func TestBoolImmutableListSort(t *testing.T) {
-	l := (*BoolImmutableList)(nil).NewWithAll([]bool{5.0, 4.0, 3.0, 2.0, 1.0})
-	newList := l.Sorted(func(i, j bool) bool {
-		return i < j
-	})
-
-	var v bool
-	newList.Each(func(element bool) {
-		if element < v {
-			t.Fail()
-		} else {
-			v = element
-		}
-	})
 }

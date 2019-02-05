@@ -36,7 +36,7 @@ func main() {
 		ListType:    *listType,
 		Mutable:     *addMutableFunctions,
 	}
-	primitiveTypes := []string{"int", "int8,", "int16", "int32", "int64", "float32", "float64", "{{.ListType}}", "bool", "string"}
+	primitiveTypes := []string{"uint", "uint8,", "uint16", "uint32", "uint64", "int", "int8,", "int16", "int32", "int64", "float32", "float64", "{{.ListType}}", "bool", "string"}
 
 	v.Primitive = false
 	for _, pt := range primitiveTypes {
@@ -67,19 +67,20 @@ func main() {
 	w.Flush()
 	file.Close()
 
-	fileName = fmt.Sprintf("%s_test.go", flag.Lookup("name").Value.String())
-	file, err = os.Create(fileName)
-	if err != nil {
-		log.Fatalf("Unable to create file: %s - %s", fileName, err)
+	if v.Primitive {
+		fileName = fmt.Sprintf("%s_test.go", flag.Lookup("name").Value.String())
+		file, err = os.Create(fileName)
+		if err != nil {
+			log.Fatalf("Unable to create file: %s - %s", fileName, err)
+		}
+		w = bufio.NewWriter(file)
+		testCasesTemplate := template.Must(template.New("testCasesTemplate").Parse(testCases))
+		if err = testCasesTemplate.Execute(w, v); err != nil {
+			log.Fatalf("Failed to create[%s]: %s", fileName, err)
+		}
+		w.Flush()
+		file.Close()
 	}
-	w = bufio.NewWriter(file)
-	testCasesTemplate := template.Must(template.New("testCasesTemplate").Parse(testCases))
-	if err = testCasesTemplate.Execute(w, v); err != nil {
-		log.Fatalf("Failed to create[%s]: %s", fileName, err)
-	}
-	w.Flush()
-	file.Close()
-
 }
 
 var immutableListTemplate = `/*
@@ -445,7 +446,7 @@ import (
 )
 
 func Test{{.ListName}}Count(t *testing.T) {
-	l := (*{{.ListName}})(nil).NewWithAll([]{{.ListType}}{5.0, 4.0, 3.0, 2.0, 1.0})
+	l := (*{{.ListName}})(nil).NewWithAll(sample_{{.ListType}})
 
 	if l.Size() != 5 {
 		t.Fail()
@@ -461,8 +462,9 @@ func Test{{.ListName}}Count(t *testing.T) {
 }
 
 
+{{if ne .ListType "bool"}}
 func Test{{.ListName}}Sort(t *testing.T) {
-	l := (*{{.ListName}})(nil).NewWithAll([]{{.ListType}}{5.0, 4.0, 3.0, 2.0, 1.0})
+	l := (*{{.ListName}})(nil).NewWithAll(sample_{{.ListType}})
 	newList := l.Sorted(func(i, j {{.ListType}}) bool {
 		return i < j
 	})
@@ -476,4 +478,5 @@ func Test{{.ListName}}Sort(t *testing.T) {
 		}
 	})
 }
+{{end}}
 `
