@@ -9,7 +9,7 @@ import (
 )
 
 func TestBoolImmutableListCount(t *testing.T) {
-	l := (*BoolImmutableList)(nil).NewWithAll(sample_bool)
+	l := BoolImmutableList_NewWithAll(sample_bool)
 
 	if l.Size() != 5 {
 		t.Fail()

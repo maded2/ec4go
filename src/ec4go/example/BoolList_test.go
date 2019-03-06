@@ -9,7 +9,7 @@ import (
 )
 
 func TestBoolListCount(t *testing.T) {
-	l := (*BoolList)(nil).NewWithAll(sample_bool)
+	l := BoolList_NewWithAll(sample_bool)
 
 	if l.Size() != 5 {
 		t.Fail()

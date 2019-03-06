@@ -9,7 +9,7 @@ import (
 )
 
 func TestStringImmutableListCount(t *testing.T) {
-	l := (*StringImmutableList)(nil).NewWithAll(sample_string)
+	l := StringImmutableList_NewWithAll(sample_string)
 
 	if l.Size() != 5 {
 		t.Fail()
@@ -25,7 +25,7 @@ func TestStringImmutableListCount(t *testing.T) {
 }
 
 func TestStringImmutableListSort(t *testing.T) {
-	l := (*StringImmutableList)(nil).NewWithAll(sample_string)
+	l := StringImmutableList_NewWithAll(sample_string)
 	newList := l.Sorted(func(i, j string) bool {
 		return i < j
 	})

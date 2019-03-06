@@ -9,7 +9,7 @@ import (
 )
 
 func TestIntListCount(t *testing.T) {
-	l := (*IntList)(nil).NewWithAll(sample_int)
+	l := IntList_NewWithAll(sample_int)
 
 	if l.Size() != 5 {
 		t.Fail()
@@ -25,7 +25,7 @@ func TestIntListCount(t *testing.T) {
 }
 
 func TestIntListSort(t *testing.T) {
-	l := (*IntList)(nil).NewWithAll(sample_int)
+	l := IntList_NewWithAll(sample_int)
 	newList := l.Sorted(func(i, j int) bool {
 		return i < j
 	})

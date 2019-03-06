@@ -9,56 +9,34 @@ import (
 	"sort"
 )
 
-type IntList struct {
-	list []int
-}
-
 // Immutable functions
 
-func (l *IntList) NewWith(element int) (newList *IntList) {
-	newList = &IntList{}
-	if l != nil {
-		newList.list = append(l.list, element)
-	} else {
-		newList.list = append([]int{}, element)
-	}
+func IntList_NewWith(element int) (newList IntList) {
+	newList = append(IntList{}, element)
 	return
 }
 
-func (l *IntList) NewWithAll(elements []int) (newList *IntList) {
-	newList = &IntList{}
-	if l == nil {
-		newList.list = append([]int{}, elements...)
-	} else {
-		for _, e1 := range l.list {
-			for _, e2 := range elements {
-				if e1 != e2 {
-					newList.list = append(newList.list, e1)
-					break
-				}
-			}
-		}
-	}
-
-	return newList
+func IntList_NewWithAll(elements []int) (newList IntList) {
+	newList = append(IntList{}, elements...)
+	return
 }
 
-func (l *IntList) NewWithout(element int) (newList *IntList) {
-	newList = &IntList{}
+func (l IntList) NewWithout(element int) (newList IntList) {
+	newList = IntList{}
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			if e != element {
-				newList.list = append(newList.list, e)
+				newList = append(newList, e)
 			}
 		}
 	}
 	return
 }
 
-func (l *IntList) NewWithoutAll(elements []int) (newList *IntList) {
-	newList = &IntList{}
+func (l IntList) NewWithoutAll(elements []int) (newList IntList) {
+	newList = IntList{}
 	if l != nil {
-		for _, e1 := range l.list {
+		for _, e1 := range l {
 			found := false
 			for _, e2 := range elements {
 				if e1 == e2 {
@@ -67,29 +45,29 @@ func (l *IntList) NewWithoutAll(elements []int) (newList *IntList) {
 				}
 			}
 			if !found {
-				newList.list = append(newList.list, e1)
+				newList = append(newList, e1)
 			}
 		}
 	}
-	return newList
+	return
 }
 
-func (l *IntList) Remove(element int) (newList *IntList) {
-	newList = &IntList{}
+func (l IntList) Remove(element int) (newList IntList) {
+	newList = IntList{}
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			if e != element {
-				newList.list = append(newList.list, e)
+				newList = append(newList, e)
 			}
 		}
 	}
 	return newList
 }
 
-func (l *IntList) RemoveAll(elements []int) (newList *IntList) {
-	newList = &IntList{}
+func (l IntList) RemoveAll(elements []int) (newList IntList) {
+	newList = IntList{}
 	if l != nil {
-		for _, e1 := range l.list {
+		for _, e1 := range l {
 			found := false
 			for _, e2 := range elements {
 				if e1 == e2 {
@@ -98,46 +76,36 @@ func (l *IntList) RemoveAll(elements []int) (newList *IntList) {
 				}
 			}
 			if !found {
-				newList.list = append(newList.list, e1)
+				newList = append(newList, e1)
 			}
 		}
 	}
-	return newList
+	return
 }
 
-func (l *IntList) Size() (size int) {
-	if l != nil {
-		size = len(l.list)
+func (l IntList) Size() (size int) {
+	size = len(l)
+	return
+}
+
+func (l IntList) IsEmpty() bool {
+	return len(l) == 0
+}
+
+func (l IntList) NotEmpty() bool {
+	return len(l) > 0
+}
+
+func (l IntList) GetAny() (result int) {
+	if len(l) > 0 {
+		result = l[rand.Intn(len(l)-1)]
 	}
 	return
 }
 
-func (l *IntList) IsEmpty() bool {
+func (l IntList) Contains(element int) bool {
 	if l != nil {
-		return len(l.list) == 0
-	} else {
-		return true
-	}
-}
-
-func (l *IntList) NotEmpty() bool {
-	if l != nil {
-		return len(l.list) > 0
-	} else {
-		return false
-	}
-}
-
-func (l *IntList) GetAny() (result int) {
-	if l != nil && len(l.list) > 0 {
-		result = l.list[rand.Intn(len(l.list)-1)]
-	}
-	return
-}
-
-func (l *IntList) Contains(element int) bool {
-	if l != nil {
-		for _, e1 := range l.list {
+		for _, e1 := range l {
 			if e1 == element {
 				return true
 			}
@@ -146,10 +114,10 @@ func (l *IntList) Contains(element int) bool {
 	return false
 }
 
-func (l *IntList) ContainsAll(elements []int) bool {
+func (l IntList) ContainsAll(elements []int) bool {
 	if l != nil {
 		n := 0
-		for _, e1 := range l.list {
+		for _, e1 := range l {
 			for _, e2 := range elements {
 				if e1 == e2 {
 					n++
@@ -164,171 +132,161 @@ func (l *IntList) ContainsAll(elements []int) bool {
 	return false
 }
 
-func (l *IntList) Each(procedure func(element int)) *IntList {
+func (l IntList) Each(procedure func(element int)) IntList {
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			procedure(e)
 		}
 	}
 	return l
 }
 
-func (l *IntList) Select(predicate func(element int) bool) (newList *IntList) {
-	newList = &IntList{}
+func (l IntList) Select(predicate func(element int) bool) (newList IntList) {
+	newList = IntList{}
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			if predicate(e) {
-				newList.list = append(newList.list, e)
+				newList = append(newList, e)
 			}
 		}
 	}
 	return
 }
 
-func (l *IntList) Reject(predicate func(element int) bool) (newList *IntList) {
-	newList = &IntList{}
+func (l IntList) Reject(predicate func(element int) bool) (newList IntList) {
+	newList = IntList{}
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			if predicate(e) == false {
-				newList.list = append(newList.list, e)
+				newList = append(newList, e)
 			}
 		}
 	}
 	return
 }
 
-func (l *IntList) Partition(predicate func(element int) bool) (accepted, rejected *IntList) {
-	accepted, rejected = &IntList{}, &IntList{}
+func (l IntList) Partition(predicate func(element int) bool) (accepted, rejected IntList) {
+	accepted, rejected = IntList{}, IntList{}
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			if predicate(e) {
-				accepted.list = append(accepted.list, e)
+				accepted = append(accepted, e)
 			} else {
-				rejected.list = append(rejected.list, e)
+				rejected = append(rejected, e)
 			}
 		}
 	}
 	return
 }
 
-func (l *IntList) Detect(predicate func(element int) bool) bool {
-	if l != nil {
-		for _, e := range l.list {
-			if predicate(e) {
-				return true
-			}
+func (l IntList) Detect(predicate func(element int) bool) bool {
+	for _, e := range l {
+		if predicate(e) {
+			return true
 		}
 	}
 	return false
 }
 
-func (l *IntList) Count(predicate func(element int) bool) (count int) {
-	if l != nil {
-		for _, e := range l.list {
-			if predicate(e) {
-				count++
-			}
+func (l IntList) Count(predicate func(element int) bool) (count int) {
+	for _, e := range l {
+		if predicate(e) {
+			count++
 		}
 	}
 	return
 }
 
-func (l *IntList) AnySatisfy(predicate func(element int) bool) bool {
-	if l != nil {
-		for _, e := range l.list {
-			if predicate(e) {
-				return true
-			}
+func (l IntList) AnySatisfy(predicate func(element int) bool) bool {
+	for _, e := range l {
+		if predicate(e) {
+			return true
 		}
 	}
 	return false
 }
 
-func (l *IntList) AllSatisfy(predicate func(element int) bool) bool {
-	if l != nil {
-		for _, e := range l.list {
-			if predicate(e) == false {
-				return false
-			}
+func (l IntList) AllSatisfy(predicate func(element int) bool) bool {
+	for _, e := range l {
+		if predicate(e) == false {
+			return false
 		}
 	}
 	return true
 }
 
-func (l *IntList) NoneSatisfy(predicate func(element int) bool) bool {
-	if l != nil {
-		for _, e := range l.list {
-			if predicate(e) {
-				return false
-			}
+func (l IntList) NoneSatisfy(predicate func(element int) bool) bool {
+	for _, e := range l {
+		if predicate(e) {
+			return false
 		}
 	}
 	return true
 }
 
-func (l *IntList) Sorted(compare func(i, j int) bool) (newList *IntList) {
-	newList = &IntList{}
+func (l IntList) Sorted(compare func(i, j int) bool) (newList IntList) {
+	newList = IntList{}
 	if l != nil {
-		newList.list = append([]int{}, l.list...)
-		sort.Slice(newList.list,
+		newList = append(IntList{}, l...)
+		sort.Slice(newList,
 			func(i, j int) bool {
-				return compare(newList.list[i], newList.list[j])
+				return compare(newList[i], newList[j])
 			})
 	}
 	return
 }
 
 // Mutable functions
-func (l *IntList) NewEmpty() (newList *IntList) {
-	newList = &IntList{}
+func IntList_NewEmpty() (newList IntList) {
+	newList = IntList{}
+	return
+}
+
+func (l IntList) With(element int) IntList {
+	l = append(l, element)
 	return l
 }
 
-func (l *IntList) With(element int) *IntList {
-	l.list = append(l.list, element)
-	return l
-}
-
-func (l *IntList) Without(element int) *IntList {
-	for n, e := range l.list {
+func (l IntList) Without(element int) IntList {
+	for n, e := range l {
 		if e == element {
-			l.list = append(l.list[:n], l.list[n+1:]...)
+			l = append(l[:n], l[n+1:]...)
 		}
 	}
 	return l
 }
 
-func (l *IntList) WithAll(elements []int) *IntList {
-	l.list = append(l.list, elements...)
+func (l IntList) WithAll(elements []int) IntList {
+	l = append(l, elements...)
 	return l
 }
 
-func (l *IntList) WithoutAll(elements []int) *IntList {
+func (l IntList) WithoutAll(elements []int) IntList {
 	for _, element := range elements {
-		for n, e := range l.list {
+		for n, e := range l {
 			if e == element {
-				l.list = append(l.list[:n], l.list[n+1:]...)
+				l = append(l[:n], l[n+1:]...)
 			}
 		}
 	}
 	return l
 }
 
-func (l *IntList) RemoveIf(predicate func(element int) bool) *IntList {
-	for n, e := range l.list {
+func (l IntList) RemoveIf(predicate func(element int) bool) IntList {
+	for n, e := range l {
 		if predicate(e) {
-			l.list = append(l.list[:n], l.list[n+1:]...)
+			l = append(l[:n], l[n+1:]...)
 		}
 	}
 	return l
 }
 
-func (l *IntList) AddAll(elements []int) *IntList {
+func (l IntList) AddAll(elements []int) IntList {
 	return l.WithAll(elements)
 }
 
-func (l *IntList) RetainAll(elements []int) *IntList {
-	for n, e := range l.list {
+func (l IntList) RetainAll(elements []int) IntList {
+	for n, e := range l {
 		retain := true
 		for _, element := range elements {
 			if e != element {
@@ -337,7 +295,7 @@ func (l *IntList) RetainAll(elements []int) *IntList {
 			}
 		}
 		if !retain {
-			l.list = append(l.list[:n], l.list[n+1:]...)
+			l = append(l[:n], l[n+1:]...)
 		}
 	}
 	return l

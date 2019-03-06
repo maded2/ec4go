@@ -9,7 +9,7 @@ import (
 )
 
 func TestStringListCount(t *testing.T) {
-	l := (*StringList)(nil).NewWithAll(sample_string)
+	l := StringList_NewWithAll(sample_string)
 
 	if l.Size() != 5 {
 		t.Fail()
@@ -25,7 +25,7 @@ func TestStringListCount(t *testing.T) {
 }
 
 func TestStringListSort(t *testing.T) {
-	l := (*StringList)(nil).NewWithAll(sample_string)
+	l := StringList_NewWithAll(sample_string)
 	newList := l.Sorted(func(i, j string) bool {
 		return i < j
 	})

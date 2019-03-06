@@ -9,56 +9,34 @@ import (
 	"sort"
 )
 
-type IntImmutableList struct {
-	list []int
-}
-
 // Immutable functions
 
-func (l *IntImmutableList) NewWith(element int) (newList *IntImmutableList) {
-	newList = &IntImmutableList{}
-	if l != nil {
-		newList.list = append(l.list, element)
-	} else {
-		newList.list = append([]int{}, element)
-	}
+func IntImmutableList_NewWith(element int) (newList IntImmutableList) {
+	newList = append(IntImmutableList{}, element)
 	return
 }
 
-func (l *IntImmutableList) NewWithAll(elements []int) (newList *IntImmutableList) {
-	newList = &IntImmutableList{}
-	if l == nil {
-		newList.list = append([]int{}, elements...)
-	} else {
-		for _, e1 := range l.list {
-			for _, e2 := range elements {
-				if e1 != e2 {
-					newList.list = append(newList.list, e1)
-					break
-				}
-			}
-		}
-	}
-
-	return newList
+func IntImmutableList_NewWithAll(elements []int) (newList IntImmutableList) {
+	newList = append(IntImmutableList{}, elements...)
+	return
 }
 
-func (l *IntImmutableList) NewWithout(element int) (newList *IntImmutableList) {
-	newList = &IntImmutableList{}
+func (l IntImmutableList) NewWithout(element int) (newList IntImmutableList) {
+	newList = IntImmutableList{}
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			if e != element {
-				newList.list = append(newList.list, e)
+				newList = append(newList, e)
 			}
 		}
 	}
 	return
 }
 
-func (l *IntImmutableList) NewWithoutAll(elements []int) (newList *IntImmutableList) {
-	newList = &IntImmutableList{}
+func (l IntImmutableList) NewWithoutAll(elements []int) (newList IntImmutableList) {
+	newList = IntImmutableList{}
 	if l != nil {
-		for _, e1 := range l.list {
+		for _, e1 := range l {
 			found := false
 			for _, e2 := range elements {
 				if e1 == e2 {
@@ -67,29 +45,29 @@ func (l *IntImmutableList) NewWithoutAll(elements []int) (newList *IntImmutableL
 				}
 			}
 			if !found {
-				newList.list = append(newList.list, e1)
+				newList = append(newList, e1)
 			}
 		}
 	}
-	return newList
+	return
 }
 
-func (l *IntImmutableList) Remove(element int) (newList *IntImmutableList) {
-	newList = &IntImmutableList{}
+func (l IntImmutableList) Remove(element int) (newList IntImmutableList) {
+	newList = IntImmutableList{}
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			if e != element {
-				newList.list = append(newList.list, e)
+				newList = append(newList, e)
 			}
 		}
 	}
 	return newList
 }
 
-func (l *IntImmutableList) RemoveAll(elements []int) (newList *IntImmutableList) {
-	newList = &IntImmutableList{}
+func (l IntImmutableList) RemoveAll(elements []int) (newList IntImmutableList) {
+	newList = IntImmutableList{}
 	if l != nil {
-		for _, e1 := range l.list {
+		for _, e1 := range l {
 			found := false
 			for _, e2 := range elements {
 				if e1 == e2 {
@@ -98,46 +76,36 @@ func (l *IntImmutableList) RemoveAll(elements []int) (newList *IntImmutableList)
 				}
 			}
 			if !found {
-				newList.list = append(newList.list, e1)
+				newList = append(newList, e1)
 			}
 		}
 	}
-	return newList
+	return
 }
 
-func (l *IntImmutableList) Size() (size int) {
-	if l != nil {
-		size = len(l.list)
+func (l IntImmutableList) Size() (size int) {
+	size = len(l)
+	return
+}
+
+func (l IntImmutableList) IsEmpty() bool {
+	return len(l) == 0
+}
+
+func (l IntImmutableList) NotEmpty() bool {
+	return len(l) > 0
+}
+
+func (l IntImmutableList) GetAny() (result int) {
+	if len(l) > 0 {
+		result = l[rand.Intn(len(l)-1)]
 	}
 	return
 }
 
-func (l *IntImmutableList) IsEmpty() bool {
+func (l IntImmutableList) Contains(element int) bool {
 	if l != nil {
-		return len(l.list) == 0
-	} else {
-		return true
-	}
-}
-
-func (l *IntImmutableList) NotEmpty() bool {
-	if l != nil {
-		return len(l.list) > 0
-	} else {
-		return false
-	}
-}
-
-func (l *IntImmutableList) GetAny() (result int) {
-	if l != nil && len(l.list) > 0 {
-		result = l.list[rand.Intn(len(l.list)-1)]
-	}
-	return
-}
-
-func (l *IntImmutableList) Contains(element int) bool {
-	if l != nil {
-		for _, e1 := range l.list {
+		for _, e1 := range l {
 			if e1 == element {
 				return true
 			}
@@ -146,10 +114,10 @@ func (l *IntImmutableList) Contains(element int) bool {
 	return false
 }
 
-func (l *IntImmutableList) ContainsAll(elements []int) bool {
+func (l IntImmutableList) ContainsAll(elements []int) bool {
 	if l != nil {
 		n := 0
-		for _, e1 := range l.list {
+		for _, e1 := range l {
 			for _, e2 := range elements {
 				if e1 == e2 {
 					n++
@@ -164,115 +132,105 @@ func (l *IntImmutableList) ContainsAll(elements []int) bool {
 	return false
 }
 
-func (l *IntImmutableList) Each(procedure func(element int)) *IntImmutableList {
+func (l IntImmutableList) Each(procedure func(element int)) IntImmutableList {
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			procedure(e)
 		}
 	}
 	return l
 }
 
-func (l *IntImmutableList) Select(predicate func(element int) bool) (newList *IntImmutableList) {
-	newList = &IntImmutableList{}
+func (l IntImmutableList) Select(predicate func(element int) bool) (newList IntImmutableList) {
+	newList = IntImmutableList{}
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			if predicate(e) {
-				newList.list = append(newList.list, e)
+				newList = append(newList, e)
 			}
 		}
 	}
 	return
 }
 
-func (l *IntImmutableList) Reject(predicate func(element int) bool) (newList *IntImmutableList) {
-	newList = &IntImmutableList{}
+func (l IntImmutableList) Reject(predicate func(element int) bool) (newList IntImmutableList) {
+	newList = IntImmutableList{}
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			if predicate(e) == false {
-				newList.list = append(newList.list, e)
+				newList = append(newList, e)
 			}
 		}
 	}
 	return
 }
 
-func (l *IntImmutableList) Partition(predicate func(element int) bool) (accepted, rejected *IntImmutableList) {
-	accepted, rejected = &IntImmutableList{}, &IntImmutableList{}
+func (l IntImmutableList) Partition(predicate func(element int) bool) (accepted, rejected IntImmutableList) {
+	accepted, rejected = IntImmutableList{}, IntImmutableList{}
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			if predicate(e) {
-				accepted.list = append(accepted.list, e)
+				accepted = append(accepted, e)
 			} else {
-				rejected.list = append(rejected.list, e)
+				rejected = append(rejected, e)
 			}
 		}
 	}
 	return
 }
 
-func (l *IntImmutableList) Detect(predicate func(element int) bool) bool {
-	if l != nil {
-		for _, e := range l.list {
-			if predicate(e) {
-				return true
-			}
+func (l IntImmutableList) Detect(predicate func(element int) bool) bool {
+	for _, e := range l {
+		if predicate(e) {
+			return true
 		}
 	}
 	return false
 }
 
-func (l *IntImmutableList) Count(predicate func(element int) bool) (count int) {
-	if l != nil {
-		for _, e := range l.list {
-			if predicate(e) {
-				count++
-			}
+func (l IntImmutableList) Count(predicate func(element int) bool) (count int) {
+	for _, e := range l {
+		if predicate(e) {
+			count++
 		}
 	}
 	return
 }
 
-func (l *IntImmutableList) AnySatisfy(predicate func(element int) bool) bool {
-	if l != nil {
-		for _, e := range l.list {
-			if predicate(e) {
-				return true
-			}
+func (l IntImmutableList) AnySatisfy(predicate func(element int) bool) bool {
+	for _, e := range l {
+		if predicate(e) {
+			return true
 		}
 	}
 	return false
 }
 
-func (l *IntImmutableList) AllSatisfy(predicate func(element int) bool) bool {
-	if l != nil {
-		for _, e := range l.list {
-			if predicate(e) == false {
-				return false
-			}
+func (l IntImmutableList) AllSatisfy(predicate func(element int) bool) bool {
+	for _, e := range l {
+		if predicate(e) == false {
+			return false
 		}
 	}
 	return true
 }
 
-func (l *IntImmutableList) NoneSatisfy(predicate func(element int) bool) bool {
-	if l != nil {
-		for _, e := range l.list {
-			if predicate(e) {
-				return false
-			}
+func (l IntImmutableList) NoneSatisfy(predicate func(element int) bool) bool {
+	for _, e := range l {
+		if predicate(e) {
+			return false
 		}
 	}
 	return true
 }
 
-func (l *IntImmutableList) Sorted(compare func(i, j int) bool) (newList *IntImmutableList) {
-	newList = &IntImmutableList{}
+func (l IntImmutableList) Sorted(compare func(i, j int) bool) (newList IntImmutableList) {
+	newList = IntImmutableList{}
 	if l != nil {
-		newList.list = append([]int{}, l.list...)
-		sort.Slice(newList.list,
+		newList = append(IntImmutableList{}, l...)
+		sort.Slice(newList,
 			func(i, j int) bool {
-				return compare(newList.list[i], newList.list[j])
+				return compare(newList[i], newList[j])
 			})
 	}
 	return

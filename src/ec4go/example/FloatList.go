@@ -9,56 +9,34 @@ import (
 	"sort"
 )
 
-type FloatList struct {
-	list []float64
-}
-
 // Immutable functions
 
-func (l *FloatList) NewWith(element float64) (newList *FloatList) {
-	newList = &FloatList{}
-	if l != nil {
-		newList.list = append(l.list, element)
-	} else {
-		newList.list = append([]float64{}, element)
-	}
+func FloatList_NewWith(element float64) (newList FloatList) {
+	newList = append(FloatList{}, element)
 	return
 }
 
-func (l *FloatList) NewWithAll(elements []float64) (newList *FloatList) {
-	newList = &FloatList{}
-	if l == nil {
-		newList.list = append([]float64{}, elements...)
-	} else {
-		for _, e1 := range l.list {
-			for _, e2 := range elements {
-				if e1 != e2 {
-					newList.list = append(newList.list, e1)
-					break
-				}
-			}
-		}
-	}
-
-	return newList
+func FloatList_NewWithAll(elements []float64) (newList FloatList) {
+	newList = append(FloatList{}, elements...)
+	return
 }
 
-func (l *FloatList) NewWithout(element float64) (newList *FloatList) {
-	newList = &FloatList{}
+func (l FloatList) NewWithout(element float64) (newList FloatList) {
+	newList = FloatList{}
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			if e != element {
-				newList.list = append(newList.list, e)
+				newList = append(newList, e)
 			}
 		}
 	}
 	return
 }
 
-func (l *FloatList) NewWithoutAll(elements []float64) (newList *FloatList) {
-	newList = &FloatList{}
+func (l FloatList) NewWithoutAll(elements []float64) (newList FloatList) {
+	newList = FloatList{}
 	if l != nil {
-		for _, e1 := range l.list {
+		for _, e1 := range l {
 			found := false
 			for _, e2 := range elements {
 				if e1 == e2 {
@@ -67,29 +45,29 @@ func (l *FloatList) NewWithoutAll(elements []float64) (newList *FloatList) {
 				}
 			}
 			if !found {
-				newList.list = append(newList.list, e1)
+				newList = append(newList, e1)
 			}
 		}
 	}
-	return newList
+	return
 }
 
-func (l *FloatList) Remove(element float64) (newList *FloatList) {
-	newList = &FloatList{}
+func (l FloatList) Remove(element float64) (newList FloatList) {
+	newList = FloatList{}
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			if e != element {
-				newList.list = append(newList.list, e)
+				newList = append(newList, e)
 			}
 		}
 	}
 	return newList
 }
 
-func (l *FloatList) RemoveAll(elements []float64) (newList *FloatList) {
-	newList = &FloatList{}
+func (l FloatList) RemoveAll(elements []float64) (newList FloatList) {
+	newList = FloatList{}
 	if l != nil {
-		for _, e1 := range l.list {
+		for _, e1 := range l {
 			found := false
 			for _, e2 := range elements {
 				if e1 == e2 {
@@ -98,46 +76,36 @@ func (l *FloatList) RemoveAll(elements []float64) (newList *FloatList) {
 				}
 			}
 			if !found {
-				newList.list = append(newList.list, e1)
+				newList = append(newList, e1)
 			}
 		}
 	}
-	return newList
+	return
 }
 
-func (l *FloatList) Size() (size int) {
-	if l != nil {
-		size = len(l.list)
+func (l FloatList) Size() (size int) {
+	size = len(l)
+	return
+}
+
+func (l FloatList) IsEmpty() bool {
+	return len(l) == 0
+}
+
+func (l FloatList) NotEmpty() bool {
+	return len(l) > 0
+}
+
+func (l FloatList) GetAny() (result float64) {
+	if len(l) > 0 {
+		result = l[rand.Intn(len(l)-1)]
 	}
 	return
 }
 
-func (l *FloatList) IsEmpty() bool {
+func (l FloatList) Contains(element float64) bool {
 	if l != nil {
-		return len(l.list) == 0
-	} else {
-		return true
-	}
-}
-
-func (l *FloatList) NotEmpty() bool {
-	if l != nil {
-		return len(l.list) > 0
-	} else {
-		return false
-	}
-}
-
-func (l *FloatList) GetAny() (result float64) {
-	if l != nil && len(l.list) > 0 {
-		result = l.list[rand.Intn(len(l.list)-1)]
-	}
-	return
-}
-
-func (l *FloatList) Contains(element float64) bool {
-	if l != nil {
-		for _, e1 := range l.list {
+		for _, e1 := range l {
 			if e1 == element {
 				return true
 			}
@@ -146,10 +114,10 @@ func (l *FloatList) Contains(element float64) bool {
 	return false
 }
 
-func (l *FloatList) ContainsAll(elements []float64) bool {
+func (l FloatList) ContainsAll(elements []float64) bool {
 	if l != nil {
 		n := 0
-		for _, e1 := range l.list {
+		for _, e1 := range l {
 			for _, e2 := range elements {
 				if e1 == e2 {
 					n++
@@ -164,171 +132,161 @@ func (l *FloatList) ContainsAll(elements []float64) bool {
 	return false
 }
 
-func (l *FloatList) Each(procedure func(element float64)) *FloatList {
+func (l FloatList) Each(procedure func(element float64)) FloatList {
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			procedure(e)
 		}
 	}
 	return l
 }
 
-func (l *FloatList) Select(predicate func(element float64) bool) (newList *FloatList) {
-	newList = &FloatList{}
+func (l FloatList) Select(predicate func(element float64) bool) (newList FloatList) {
+	newList = FloatList{}
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			if predicate(e) {
-				newList.list = append(newList.list, e)
+				newList = append(newList, e)
 			}
 		}
 	}
 	return
 }
 
-func (l *FloatList) Reject(predicate func(element float64) bool) (newList *FloatList) {
-	newList = &FloatList{}
+func (l FloatList) Reject(predicate func(element float64) bool) (newList FloatList) {
+	newList = FloatList{}
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			if predicate(e) == false {
-				newList.list = append(newList.list, e)
+				newList = append(newList, e)
 			}
 		}
 	}
 	return
 }
 
-func (l *FloatList) Partition(predicate func(element float64) bool) (accepted, rejected *FloatList) {
-	accepted, rejected = &FloatList{}, &FloatList{}
+func (l FloatList) Partition(predicate func(element float64) bool) (accepted, rejected FloatList) {
+	accepted, rejected = FloatList{}, FloatList{}
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			if predicate(e) {
-				accepted.list = append(accepted.list, e)
+				accepted = append(accepted, e)
 			} else {
-				rejected.list = append(rejected.list, e)
+				rejected = append(rejected, e)
 			}
 		}
 	}
 	return
 }
 
-func (l *FloatList) Detect(predicate func(element float64) bool) bool {
-	if l != nil {
-		for _, e := range l.list {
-			if predicate(e) {
-				return true
-			}
+func (l FloatList) Detect(predicate func(element float64) bool) bool {
+	for _, e := range l {
+		if predicate(e) {
+			return true
 		}
 	}
 	return false
 }
 
-func (l *FloatList) Count(predicate func(element float64) bool) (count int) {
-	if l != nil {
-		for _, e := range l.list {
-			if predicate(e) {
-				count++
-			}
+func (l FloatList) Count(predicate func(element float64) bool) (count int) {
+	for _, e := range l {
+		if predicate(e) {
+			count++
 		}
 	}
 	return
 }
 
-func (l *FloatList) AnySatisfy(predicate func(element float64) bool) bool {
-	if l != nil {
-		for _, e := range l.list {
-			if predicate(e) {
-				return true
-			}
+func (l FloatList) AnySatisfy(predicate func(element float64) bool) bool {
+	for _, e := range l {
+		if predicate(e) {
+			return true
 		}
 	}
 	return false
 }
 
-func (l *FloatList) AllSatisfy(predicate func(element float64) bool) bool {
-	if l != nil {
-		for _, e := range l.list {
-			if predicate(e) == false {
-				return false
-			}
+func (l FloatList) AllSatisfy(predicate func(element float64) bool) bool {
+	for _, e := range l {
+		if predicate(e) == false {
+			return false
 		}
 	}
 	return true
 }
 
-func (l *FloatList) NoneSatisfy(predicate func(element float64) bool) bool {
-	if l != nil {
-		for _, e := range l.list {
-			if predicate(e) {
-				return false
-			}
+func (l FloatList) NoneSatisfy(predicate func(element float64) bool) bool {
+	for _, e := range l {
+		if predicate(e) {
+			return false
 		}
 	}
 	return true
 }
 
-func (l *FloatList) Sorted(compare func(i, j float64) bool) (newList *FloatList) {
-	newList = &FloatList{}
+func (l FloatList) Sorted(compare func(i, j float64) bool) (newList FloatList) {
+	newList = FloatList{}
 	if l != nil {
-		newList.list = append([]float64{}, l.list...)
-		sort.Slice(newList.list,
+		newList = append(FloatList{}, l...)
+		sort.Slice(newList,
 			func(i, j int) bool {
-				return compare(newList.list[i], newList.list[j])
+				return compare(newList[i], newList[j])
 			})
 	}
 	return
 }
 
 // Mutable functions
-func (l *FloatList) NewEmpty() (newList *FloatList) {
-	newList = &FloatList{}
+func FloatList_NewEmpty() (newList FloatList) {
+	newList = FloatList{}
+	return
+}
+
+func (l FloatList) With(element float64) FloatList {
+	l = append(l, element)
 	return l
 }
 
-func (l *FloatList) With(element float64) *FloatList {
-	l.list = append(l.list, element)
-	return l
-}
-
-func (l *FloatList) Without(element float64) *FloatList {
-	for n, e := range l.list {
+func (l FloatList) Without(element float64) FloatList {
+	for n, e := range l {
 		if e == element {
-			l.list = append(l.list[:n], l.list[n+1:]...)
+			l = append(l[:n], l[n+1:]...)
 		}
 	}
 	return l
 }
 
-func (l *FloatList) WithAll(elements []float64) *FloatList {
-	l.list = append(l.list, elements...)
+func (l FloatList) WithAll(elements []float64) FloatList {
+	l = append(l, elements...)
 	return l
 }
 
-func (l *FloatList) WithoutAll(elements []float64) *FloatList {
+func (l FloatList) WithoutAll(elements []float64) FloatList {
 	for _, element := range elements {
-		for n, e := range l.list {
+		for n, e := range l {
 			if e == element {
-				l.list = append(l.list[:n], l.list[n+1:]...)
+				l = append(l[:n], l[n+1:]...)
 			}
 		}
 	}
 	return l
 }
 
-func (l *FloatList) RemoveIf(predicate func(element float64) bool) *FloatList {
-	for n, e := range l.list {
+func (l FloatList) RemoveIf(predicate func(element float64) bool) FloatList {
+	for n, e := range l {
 		if predicate(e) {
-			l.list = append(l.list[:n], l.list[n+1:]...)
+			l = append(l[:n], l[n+1:]...)
 		}
 	}
 	return l
 }
 
-func (l *FloatList) AddAll(elements []float64) *FloatList {
+func (l FloatList) AddAll(elements []float64) FloatList {
 	return l.WithAll(elements)
 }
 
-func (l *FloatList) RetainAll(elements []float64) *FloatList {
-	for n, e := range l.list {
+func (l FloatList) RetainAll(elements []float64) FloatList {
+	for n, e := range l {
 		retain := true
 		for _, element := range elements {
 			if e != element {
@@ -337,7 +295,7 @@ func (l *FloatList) RetainAll(elements []float64) *FloatList {
 			}
 		}
 		if !retain {
-			l.list = append(l.list[:n], l.list[n+1:]...)
+			l = append(l[:n], l[n+1:]...)
 		}
 	}
 	return l

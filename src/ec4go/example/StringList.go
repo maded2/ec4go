@@ -9,56 +9,34 @@ import (
 	"sort"
 )
 
-type StringList struct {
-	list []string
-}
-
 // Immutable functions
 
-func (l *StringList) NewWith(element string) (newList *StringList) {
-	newList = &StringList{}
-	if l != nil {
-		newList.list = append(l.list, element)
-	} else {
-		newList.list = append([]string{}, element)
-	}
+func StringList_NewWith(element string) (newList StringList) {
+	newList = append(StringList{}, element)
 	return
 }
 
-func (l *StringList) NewWithAll(elements []string) (newList *StringList) {
-	newList = &StringList{}
-	if l == nil {
-		newList.list = append([]string{}, elements...)
-	} else {
-		for _, e1 := range l.list {
-			for _, e2 := range elements {
-				if e1 != e2 {
-					newList.list = append(newList.list, e1)
-					break
-				}
-			}
-		}
-	}
-
-	return newList
+func StringList_NewWithAll(elements []string) (newList StringList) {
+	newList = append(StringList{}, elements...)
+	return
 }
 
-func (l *StringList) NewWithout(element string) (newList *StringList) {
-	newList = &StringList{}
+func (l StringList) NewWithout(element string) (newList StringList) {
+	newList = StringList{}
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			if e != element {
-				newList.list = append(newList.list, e)
+				newList = append(newList, e)
 			}
 		}
 	}
 	return
 }
 
-func (l *StringList) NewWithoutAll(elements []string) (newList *StringList) {
-	newList = &StringList{}
+func (l StringList) NewWithoutAll(elements []string) (newList StringList) {
+	newList = StringList{}
 	if l != nil {
-		for _, e1 := range l.list {
+		for _, e1 := range l {
 			found := false
 			for _, e2 := range elements {
 				if e1 == e2 {
@@ -67,29 +45,29 @@ func (l *StringList) NewWithoutAll(elements []string) (newList *StringList) {
 				}
 			}
 			if !found {
-				newList.list = append(newList.list, e1)
+				newList = append(newList, e1)
 			}
 		}
 	}
-	return newList
+	return
 }
 
-func (l *StringList) Remove(element string) (newList *StringList) {
-	newList = &StringList{}
+func (l StringList) Remove(element string) (newList StringList) {
+	newList = StringList{}
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			if e != element {
-				newList.list = append(newList.list, e)
+				newList = append(newList, e)
 			}
 		}
 	}
 	return newList
 }
 
-func (l *StringList) RemoveAll(elements []string) (newList *StringList) {
-	newList = &StringList{}
+func (l StringList) RemoveAll(elements []string) (newList StringList) {
+	newList = StringList{}
 	if l != nil {
-		for _, e1 := range l.list {
+		for _, e1 := range l {
 			found := false
 			for _, e2 := range elements {
 				if e1 == e2 {
@@ -98,46 +76,36 @@ func (l *StringList) RemoveAll(elements []string) (newList *StringList) {
 				}
 			}
 			if !found {
-				newList.list = append(newList.list, e1)
+				newList = append(newList, e1)
 			}
 		}
 	}
-	return newList
+	return
 }
 
-func (l *StringList) Size() (size int) {
-	if l != nil {
-		size = len(l.list)
+func (l StringList) Size() (size int) {
+	size = len(l)
+	return
+}
+
+func (l StringList) IsEmpty() bool {
+	return len(l) == 0
+}
+
+func (l StringList) NotEmpty() bool {
+	return len(l) > 0
+}
+
+func (l StringList) GetAny() (result string) {
+	if len(l) > 0 {
+		result = l[rand.Intn(len(l)-1)]
 	}
 	return
 }
 
-func (l *StringList) IsEmpty() bool {
+func (l StringList) Contains(element string) bool {
 	if l != nil {
-		return len(l.list) == 0
-	} else {
-		return true
-	}
-}
-
-func (l *StringList) NotEmpty() bool {
-	if l != nil {
-		return len(l.list) > 0
-	} else {
-		return false
-	}
-}
-
-func (l *StringList) GetAny() (result string) {
-	if l != nil && len(l.list) > 0 {
-		result = l.list[rand.Intn(len(l.list)-1)]
-	}
-	return
-}
-
-func (l *StringList) Contains(element string) bool {
-	if l != nil {
-		for _, e1 := range l.list {
+		for _, e1 := range l {
 			if e1 == element {
 				return true
 			}
@@ -146,10 +114,10 @@ func (l *StringList) Contains(element string) bool {
 	return false
 }
 
-func (l *StringList) ContainsAll(elements []string) bool {
+func (l StringList) ContainsAll(elements []string) bool {
 	if l != nil {
 		n := 0
-		for _, e1 := range l.list {
+		for _, e1 := range l {
 			for _, e2 := range elements {
 				if e1 == e2 {
 					n++
@@ -164,171 +132,161 @@ func (l *StringList) ContainsAll(elements []string) bool {
 	return false
 }
 
-func (l *StringList) Each(procedure func(element string)) *StringList {
+func (l StringList) Each(procedure func(element string)) StringList {
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			procedure(e)
 		}
 	}
 	return l
 }
 
-func (l *StringList) Select(predicate func(element string) bool) (newList *StringList) {
-	newList = &StringList{}
+func (l StringList) Select(predicate func(element string) bool) (newList StringList) {
+	newList = StringList{}
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			if predicate(e) {
-				newList.list = append(newList.list, e)
+				newList = append(newList, e)
 			}
 		}
 	}
 	return
 }
 
-func (l *StringList) Reject(predicate func(element string) bool) (newList *StringList) {
-	newList = &StringList{}
+func (l StringList) Reject(predicate func(element string) bool) (newList StringList) {
+	newList = StringList{}
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			if predicate(e) == false {
-				newList.list = append(newList.list, e)
+				newList = append(newList, e)
 			}
 		}
 	}
 	return
 }
 
-func (l *StringList) Partition(predicate func(element string) bool) (accepted, rejected *StringList) {
-	accepted, rejected = &StringList{}, &StringList{}
+func (l StringList) Partition(predicate func(element string) bool) (accepted, rejected StringList) {
+	accepted, rejected = StringList{}, StringList{}
 	if l != nil {
-		for _, e := range l.list {
+		for _, e := range l {
 			if predicate(e) {
-				accepted.list = append(accepted.list, e)
+				accepted = append(accepted, e)
 			} else {
-				rejected.list = append(rejected.list, e)
+				rejected = append(rejected, e)
 			}
 		}
 	}
 	return
 }
 
-func (l *StringList) Detect(predicate func(element string) bool) bool {
-	if l != nil {
-		for _, e := range l.list {
-			if predicate(e) {
-				return true
-			}
+func (l StringList) Detect(predicate func(element string) bool) bool {
+	for _, e := range l {
+		if predicate(e) {
+			return true
 		}
 	}
 	return false
 }
 
-func (l *StringList) Count(predicate func(element string) bool) (count int) {
-	if l != nil {
-		for _, e := range l.list {
-			if predicate(e) {
-				count++
-			}
+func (l StringList) Count(predicate func(element string) bool) (count int) {
+	for _, e := range l {
+		if predicate(e) {
+			count++
 		}
 	}
 	return
 }
 
-func (l *StringList) AnySatisfy(predicate func(element string) bool) bool {
-	if l != nil {
-		for _, e := range l.list {
-			if predicate(e) {
-				return true
-			}
+func (l StringList) AnySatisfy(predicate func(element string) bool) bool {
+	for _, e := range l {
+		if predicate(e) {
+			return true
 		}
 	}
 	return false
 }
 
-func (l *StringList) AllSatisfy(predicate func(element string) bool) bool {
-	if l != nil {
-		for _, e := range l.list {
-			if predicate(e) == false {
-				return false
-			}
+func (l StringList) AllSatisfy(predicate func(element string) bool) bool {
+	for _, e := range l {
+		if predicate(e) == false {
+			return false
 		}
 	}
 	return true
 }
 
-func (l *StringList) NoneSatisfy(predicate func(element string) bool) bool {
-	if l != nil {
-		for _, e := range l.list {
-			if predicate(e) {
-				return false
-			}
+func (l StringList) NoneSatisfy(predicate func(element string) bool) bool {
+	for _, e := range l {
+		if predicate(e) {
+			return false
 		}
 	}
 	return true
 }
 
-func (l *StringList) Sorted(compare func(i, j string) bool) (newList *StringList) {
-	newList = &StringList{}
+func (l StringList) Sorted(compare func(i, j string) bool) (newList StringList) {
+	newList = StringList{}
 	if l != nil {
-		newList.list = append([]string{}, l.list...)
-		sort.Slice(newList.list,
+		newList = append(StringList{}, l...)
+		sort.Slice(newList,
 			func(i, j int) bool {
-				return compare(newList.list[i], newList.list[j])
+				return compare(newList[i], newList[j])
 			})
 	}
 	return
 }
 
 // Mutable functions
-func (l *StringList) NewEmpty() (newList *StringList) {
-	newList = &StringList{}
+func StringList_NewEmpty() (newList StringList) {
+	newList = StringList{}
+	return
+}
+
+func (l StringList) With(element string) StringList {
+	l = append(l, element)
 	return l
 }
 
-func (l *StringList) With(element string) *StringList {
-	l.list = append(l.list, element)
-	return l
-}
-
-func (l *StringList) Without(element string) *StringList {
-	for n, e := range l.list {
+func (l StringList) Without(element string) StringList {
+	for n, e := range l {
 		if e == element {
-			l.list = append(l.list[:n], l.list[n+1:]...)
+			l = append(l[:n], l[n+1:]...)
 		}
 	}
 	return l
 }
 
-func (l *StringList) WithAll(elements []string) *StringList {
-	l.list = append(l.list, elements...)
+func (l StringList) WithAll(elements []string) StringList {
+	l = append(l, elements...)
 	return l
 }
 
-func (l *StringList) WithoutAll(elements []string) *StringList {
+func (l StringList) WithoutAll(elements []string) StringList {
 	for _, element := range elements {
-		for n, e := range l.list {
+		for n, e := range l {
 			if e == element {
-				l.list = append(l.list[:n], l.list[n+1:]...)
+				l = append(l[:n], l[n+1:]...)
 			}
 		}
 	}
 	return l
 }
 
-func (l *StringList) RemoveIf(predicate func(element string) bool) *StringList {
-	for n, e := range l.list {
+func (l StringList) RemoveIf(predicate func(element string) bool) StringList {
+	for n, e := range l {
 		if predicate(e) {
-			l.list = append(l.list[:n], l.list[n+1:]...)
+			l = append(l[:n], l[n+1:]...)
 		}
 	}
 	return l
 }
 
-func (l *StringList) AddAll(elements []string) *StringList {
+func (l StringList) AddAll(elements []string) StringList {
 	return l.WithAll(elements)
 }
 
-func (l *StringList) RetainAll(elements []string) *StringList {
-	for n, e := range l.list {
+func (l StringList) RetainAll(elements []string) StringList {
+	for n, e := range l {
 		retain := true
 		for _, element := range elements {
 			if e != element {
@@ -337,7 +295,7 @@ func (l *StringList) RetainAll(elements []string) *StringList {
 			}
 		}
 		if !retain {
-			l.list = append(l.list[:n], l.list[n+1:]...)
+			l = append(l[:n], l[n+1:]...)
 		}
 	}
 	return l
